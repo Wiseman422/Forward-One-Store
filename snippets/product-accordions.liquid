@@ -1,0 +1,102 @@
+<ul class="product-accordion">
+  <li class="accordion-item">
+    <h3 class="title">
+      {{ 'products.product.description' | t | escape }}
+      <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+           viewBox="0 0 10 10" enable-background="new 0 0 10 10" xml:space="preserve">
+        <line class="vertical-line" fill="none" stroke="#000000" stroke-width="2" stroke-linejoin="round" stroke-miterlimit="10"
+              x1="5.1" y1="0" x2="5.1" y2="10"></line>
+        <line fill="none" stroke="#000000" stroke-width="2" stroke-linejoin="round" stroke-miterlimit="10" x1="10" y1="5" x2="0"
+              y2="5"></line>
+      </svg>
+    </h3>
+    <div class="content compact-description">
+      {{product.description}}
+    </div>
+  </li>
+  {%- if settings.product_tab_content_1 != blank -%}
+  <li class="accordion-item">
+    <h3 class="title">
+      {{ settings.product_tab_title_1 }}
+      <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+           viewBox="0 0 10 10" enable-background="new 0 0 10 10" xml:space="preserve">
+        <line class="vertical-line" fill="none" stroke="#000000" stroke-width="2" stroke-linejoin="round" stroke-miterlimit="10"
+              x1="5.1" y1="0" x2="5.1" y2="10"></line>
+        <line fill="none" stroke="#000000" stroke-width="2" stroke-linejoin="round" stroke-miterlimit="10" x1="10" y1="5" x2="0"
+              y2="5"></line>
+      </svg>
+    </h3>
+    <div class="content compact-product-tab-1">
+      {{pages[settings.product_tab_content_1].content}}
+    </div>
+  </li>
+  {%- endif -%}
+  {%- if settings.product_tab_content_2 != blank -%}
+  <li class="accordion-item">
+    <h3 class="title">
+      {{- settings.product_tab_title_2 -}}
+      <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+           viewBox="0 0 10 10" enable-background="new 0 0 10 10" xml:space="preserve">
+        <line class="vertical-line" fill="none" stroke="#000000" stroke-width="2" stroke-linejoin="round" stroke-miterlimit="10"
+              x1="5.1" y1="0" x2="5.1" y2="10"></line>
+        <line fill="none" stroke="#000000" stroke-width="2" stroke-linejoin="round" stroke-miterlimit="10" x1="10" y1="5" x2="0"
+              y2="5"></line>
+      </svg>
+    </h3>
+    <div class="content compact-product-tab-2">
+      {{- pages[settings.product_tab_content_2].content -}}
+    </div>
+  </li>
+  {%- endif -%}
+  {%- if settings.product_tab_content_3 != blank -%}
+  <li class="accordion-item">
+    <h3 class="title">
+      {{- settings.product_tab_title_3 -}}
+      <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+           viewBox="0 0 10 10" enable-background="new 0 0 10 10" xml:space="preserve">
+        <line class="vertical-line" fill="none" stroke="#000000" stroke-width="2" stroke-linejoin="round" stroke-miterlimit="10"
+              x1="5.1" y1="0" x2="5.1" y2="10"></line>
+        <line fill="none" stroke="#000000" stroke-width="2" stroke-linejoin="round" stroke-miterlimit="10" x1="10" y1="5" x2="0"
+              y2="5"></line>
+      </svg>
+    </h3>
+    <div class="content compact-product-tab-2">
+      {{- pages[settings.product_tab_content_3].content -}}
+    </div>
+  </li>
+  {%- endif -%}
+  {%- if settings.product_tab_content_4 != blank -%}
+  <li class="accordion-item">
+    <h3 class="title">
+      {{- settings.product_tab_title_4 -}}
+      <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+           viewBox="0 0 10 10" enable-background="new 0 0 10 10" xml:space="preserve">
+        <line class="vertical-line" fill="none" stroke="#000000" stroke-width="2" stroke-linejoin="round" stroke-miterlimit="10"
+              x1="5.1" y1="0" x2="5.1" y2="10"></line>
+        <line fill="none" stroke="#000000" stroke-width="2" stroke-linejoin="round" stroke-miterlimit="10" x1="10" y1="5" x2="0"
+              y2="5"></line>
+      </svg>
+    </h3>
+    <div class="content compact-product-tab-2">
+      {{- pages[settings.product_tab_content_4].content -}}
+    </div>
+  </li>
+  {%- endif -%}
+  {%- if settings.reviews_enable -%}
+  <li class="accordion-item accordion-review">
+    <h3 class="title">
+      {{ 'products.product.customer_reviews' | t | escape }}
+      <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+           viewBox="0 0 10 10" enable-background="new 0 0 10 10" xml:space="preserve">
+        <line class="vertical-line" fill="none" stroke="#000000" stroke-width="2" stroke-linejoin="round" stroke-miterlimit="10"
+              x1="5.1" y1="0" x2="5.1" y2="10"></line>
+        <line fill="none" stroke="#000000" stroke-width="2" stroke-linejoin="round" stroke-miterlimit="10" x1="10" y1="5" x2="0"
+              y2="5"></line>
+      </svg>
+    </h3>
+    <div class="content compact-review">
+      <div id="shopify-product-reviews" data-id="{{ product.id }}">{{- product.metafields.spr.reviews -}}</div>
+    </div>
+  </li>
+  {%- endif -%}
+</ul>

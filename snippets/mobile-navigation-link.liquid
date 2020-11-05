@@ -1,0 +1,15 @@
+{%- assign submenu = link.title | handleize -%}
+{%- assign _active  = false-%}
+{%- if link.active -%}
+{%- assign _active  = true-%}
+{%- endif -%}
+<li id="menu-item-{{section.id}}-{{forloop.index}}" class="{%- if _active -%}{{" mobile-active "}}{%- endif -%}menu-item menu-item-{{section.id}}-{{forloop.index}} {%- if linklists[submenu].links.size > 0 -%}{{" menu-item-has-children"}}{%- endif -%}">
+  <a href="{{ link.url }}"  ><span>{{ link.title }}</span>{%- if linklists[submenu].links.size > 0 -%}<i class="mobile-child-menu"></i>{%- endif -%}</a>
+  {%- if linklists[submenu].links.size > 0 -%}
+  <ul class="sub-menu sub-menu-{{forloop.index}}">
+    {%- for link in linklists[submenu].links -%}
+      {%- include 'mobile-navigation-link' -%}
+    {%- endfor -%}                
+  </ul>
+  {%- endif -%}
+</li>

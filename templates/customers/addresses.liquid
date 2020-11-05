@@ -1,0 +1,235 @@
+{%- if settings.sb_account_placement == 'left' -%}
+<div class="col-md-3{% if settings.sb_account_mobile %} hidden-sm hidden-xs{% endif %}">
+  {%- include 'sidebar-myaccount' -%}
+</div>
+{%- endif -%}
+<div id="content" class="{% if settings.sb_account_placement != '' %}col-md-9{% else %}col-md-12{% endif %} center-column body-other content-with-background">
+  <div class="clearfix">
+    <div id="address_tables">
+      <div id="view_addresses">
+        <h2>{{'customer.addresses.title' | t}}</h2>
+        {%- paginate customer.addresses by 10 -%}
+        {%- if customer.addresses.size > 0 -%}
+        <table class="table table-bordered table-hover">
+          {%- for address in customer.addresses -%}
+          <tr id="view_address_{{address.id}}">
+            <td class="text-left">
+              <ul class="list-unstyled">
+                <li>{{address.first_name}} {{address.last_name}} {% if address == customer.default_address %}({{'customer.addresses.default' | t}}){% endif %}</li>
+                <li>{{address.company}}</li>
+                <li>{{address.street}}</li>
+                <li>{{address.city}} {% if address.province_code %}, {{address.province_code}}{% endif %}</li>
+                <li>{{address.country}} {{address.zip}}</li>
+                <li>{{address.phone}}</li>
+              </ul>
+            </td>
+            <td class="text-right">
+              <a href="javascript:void(0);" class="btn btn-info" onclick="Shopify.CustomerAddress.toggleForm({{address.id}});return false">{{'customer.addresses.edit' | t}}</a>
+              <a href="javascript:void(0);" class="btn btn-danger" onclick="Shopify.CustomerAddress.destroy({{address.id}}, 'Are you sure you wish to delete this address?');return false">{{'customer.addresses.delete' | t}}</a>
+            </td>
+          </tr>
+          {%- endfor -%}
+        </table>
+        {%- else -%}
+        <p class="empty">{{'customer.addresses.no_address_html' | t}}</p>
+        {%- endif -%}
+        <div id="address_pagination">{{paginate | default_pagination}}</div>
+        <div class="buttons clearfix">
+          <div class="pull-left"><a href="/account" class="btn btn-default">{{'customer.addresses.back' | t}}</a></div>
+          <div class="pull-right"><a href="javascript:void(0);" onclick="Shopify.CustomerAddress.toggleNewForm(); return false;" class="btn btn-primary add-new-address">{{'customer.addresses.add_new' | t}}</a></div>
+        </div>
+      </div>
+      {%- for address in customer.addresses -%}
+      {%- form 'customer_address', address -%}
+      <div id="edit_address_{{address.id}}" {% unless form.errors %} style="display:none;" {% endunless %}>
+        {{ form.errors | default_errors | replace:'errors', 'alert-error errors' }}
+        <h4 class="title">{{ 'customer.addresses.edit_address' | t }}</h4>
+        <fieldset class="form-horizontal">
+          <div class="form-group required">
+            <label class="col-sm-2 control-label" for="address_first_name_{{form.id}}">{{'customer.addresses.first_name' | t}}</label>
+            <div class="col-sm-10">
+              <input type="text" required="required" name="address[first_name]" value="{{form.first_name}}" placeholder="{{'customer.addresses.first_name' | t}}" id="address_first_name_{{form.id}}" class="form-control" />
+            </div>
+          </div>
+          <div class="form-group required">
+            <label class="col-sm-2 control-label" for="address_last_name_{{form.id}}">{{'customer.addresses.last_name' | t}}</label>
+            <div class="col-sm-10">
+              <input type="text" required="required" name="address[last_name]" value="{{form.last_name}}" placeholder="{{'customer.addresses.last_name' | t}}" id="address_last_name_{{form.id}}" class="form-control" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="address_company_{{form.id}}">{{'customer.addresses.company' | t}}</label>
+            <div class="col-sm-10">
+              <input type="text" name="address[company]" value="{{form.company}}" placeholder="{{'customer.addresses.company' | t}}" id="address_company_{{form.id}}" class="form-control" />
+            </div>
+          </div>
+          <div class="form-group required">
+            <label class="col-sm-2 control-label" for="address_address1_{{form.id}}">{{'customer.addresses.address1' | t}}</label>
+            <div class="col-sm-10">
+              <input type="text" required="required" name="address[address1]" value="{{form.address1}}" placeholder="{{'customer.addresses.address1' | t}}" id="address_address1_{{form.id}}" class="form-control" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="address_address2_{{form.id}}">{{'customer.addresses.address2' | t}}</label>
+            <div class="col-sm-10">
+              <input type="text" name="address[address2]" value="{{form.address2}}" placeholder="{{'customer.addresses.address2' | t}}" id="address_address2_{{form.id}}" class="form-control" />
+            </div>
+          </div>
+          <div class="form-group required">
+            <label class="col-sm-2 control-label" for="address_city_{{form.id}}">{{'customer.addresses.city' | t}}</label>
+            <div class="col-sm-10">
+              <input type="text" required="required" name="address[city]" value="{{form.city}}" placeholder="{{'customer.addresses.city' | t}}" id="address_city_{{form.id}}" class="form-control" />
+            </div>
+          </div>
+          <div class="form-group required">
+            <label class="col-sm-2 control-label" for="address_country_{{form.id}}">{{'customer.addresses.country' | t}}</label>
+            <div class="col-sm-10">
+              <div class="select">
+                <select required="required" name="address[country]" data-default="{{form.country}}" id="address_country_{{form.id}}" class="form-control">{{country_option_tags}}</select>
+              </div>
+            </div>
+          </div>
+          <div class="form-group" id="address_province_container_{{form.id}}" style="display:none;">
+            <label class="col-sm-2 control-label" for="address_province_{{form.id}}">{{'customer.addresses.province' | t}}</label>
+            <div class="col-sm-10">
+              <div class="select">
+                <select name="address[country]" data-default="{{form.province}}" id="address_province_{{form.id}}" class="form-control"></select>
+              </div>
+            </div>
+          </div>
+          <div class="form-group required">
+            <label class="col-sm-2 control-label" for="address_zip_{{form.id}}">{{'customer.addresses.zip' | t}}</label>
+            <div class="col-sm-10">
+              <input type="text" required="required" name="address[zip]" value="{{form.zip}}" placeholder="{{'customer.addresses.zip' | t}}" id="address_zip_{{form.id}}" class="form-control" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="address_phone_{{form.id}}">{{'customer.addresses.phone' | t}}</label>
+            <div class="col-sm-10">
+              <input type="text" name="address[phone]" value="{{form.phone}}" placeholder="{{'customer.addresses.phone' | t}}" id="address_phone_{{form.id}}" class="form-control" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">{{'customer.addresses.set_default' | t}}</label>
+            <div class="col-sm-10">
+              <label class="radio-inline">
+                <input type="radio" name="address[default]" value="1"{% if address == customer.default_address %} checked="checked"{% endif %} />
+                {{'customer.addresses.yes' | t}}
+              </label>
+              <label class="radio-inline">
+                <input type="radio" name="address[default]" value="0"{% if address != customer.default_address %} checked="checked"{% endif %} />
+                {{'customer.addresses.no' | t}}
+              </label>
+            </div>
+          </div>
+        </fieldset>
+        <div class="buttons clearfix">
+          <div class="pull-left"><a href="javascript:void(0);" onclick="Shopify.CustomerAddress.toggleForm({{form.id}}); return false;" class="btn btn-default">{{'customer.addresses.cancel' | t}}</a></div>
+          <div class="pull-right"><input class="btn btn-primary" type="submit" value="{{'customer.addresses.update' | t}}" /></div>
+        </div>
+      </div>
+      {%- endform -%}
+      {%- endfor -%}
+      {%- endpaginate -%}
+    </div>
+
+    <div id="add_address" {% unless form.errors %} style="display:none;"{% endunless %}>
+      {%- form 'customer_address', customer.new_address -%}
+      <h2>{{'customer.addresses.new_address' | t}}</h2>
+      {{form.errors | default_errors | replace:'errors', 'alert-error errors'}}
+      <fieldset class="form-horizontal">
+        <div class="form-group required">
+          <label class="col-sm-2 control-label" for="address_first_name_new">{{'customer.addresses.first_name' | t}}</label>
+          <div class="col-sm-10">
+            <input type="text" required="required" name="address[first_name]" value="{{form.first_name}}" placeholder="{{'customer.addresses.first_name' | t}}" id="address_first_name_new" class="form-control" />
+          </div>
+        </div>
+        <div class="form-group required">
+          <label class="col-sm-2 control-label" for="address_last_name_new">{{'customer.addresses.last_name' | t}}</label>
+          <div class="col-sm-10">
+            <input type="text" required="required" name="address[last_name]" value="{{form.last_name}}" placeholder="{{'customer.addresses.last_name' | t}}" id="address_last_name_new" class="form-control" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-2 control-label" for="address_company_new">{{'customer.addresses.company' | t}}</label>
+          <div class="col-sm-10">
+            <input type="text" name="address[company]" value="{{form.company}}" placeholder="{{'customer.addresses.company' | t}}" id="address_company_new" class="form-control" />
+          </div>
+        </div>
+        <div class="form-group required">
+          <label class="col-sm-2 control-label" for="address_address1_new">{{'customer.addresses.address1' | t}}</label>
+          <div class="col-sm-10">
+            <input type="text" required="required" name="address[address1]" value="{{form.address1}}" placeholder="{{'customer.addresses.address1' | t}}" id="address_address1_new" class="form-control" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-2 control-label" for="address_address2_new">{{'customer.addresses.address2' | t}}</label>
+          <div class="col-sm-10">
+            <input type="text" name="address[address2]" value="{{form.address2}}" placeholder="{{'customer.addresses.address2' | t}}" id="address_address2_new" class="form-control" />
+          </div>
+        </div>
+        <div class="form-group required">
+          <label class="col-sm-2 control-label" for="address_city_new">{{'customer.addresses.city' | t}}</label>
+          <div class="col-sm-10">
+            <input type="text" required="required" name="address[city]" value="{{form.city}}" placeholder="{{'customer.addresses.city' | t}}" id="address_city_new" class="form-control" />
+          </div>
+        </div>
+        <div class="form-group required">
+          <label class="col-sm-2 control-label" for="address_country_new">{{'customer.addresses.country' | t}}</label>
+          <div class="col-sm-10">
+            <div class="select">
+              <select required="required" name="address[country]" data-default="{{form.country}}" id="address_country_new" class="form-control">{{country_option_tags}}</select>
+            </div>
+          </div>
+        </div>
+        <div class="form-group" id="address_province_container_new" style="display:none;">
+          <label class="col-sm-2 control-label" for="address_province_new">{{'customer.addresses.province' | t}}</label>
+          <div class="col-sm-10">
+            <div class="select">
+              <select name="address[country]" data-default="{{form.province}}" id="address_province_new" class="form-control"></select>
+            </div>
+          </div>
+        </div>
+        <div class="form-group required">
+          <label class="col-sm-2 control-label" for="address_zip_new">{{'customer.addresses.zip' | t}}</label>
+          <div class="col-sm-10">
+            <input type="text" required="required" name="address[zip]" value="{{form.zip}}" placeholder="{{'customer.addresses.zip' | t}}" id="address_zip_new" class="form-control" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-2 control-label" for="address_phone_new">{{'customer.addresses.phone' | t}}</label>
+          <div class="col-sm-10">
+            <input type="text" name="address[phone]" value="{{form.phone}}" placeholder="{{'customer.addresses.phone' | t}}" id="address_phone_new" class="form-control" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-2 control-label">{{'customer.addresses.set_default' | t}}</label>
+          <div class="col-sm-10">
+            <label class="radio-inline">
+              <input type="radio" name="address[default]" value="1" />
+              {{'customer.addresses.yes' | t}}
+            </label>
+            <label class="radio-inline">
+              <input type="radio" name="address[default]" value="0" checked="checked" />
+              {{'customer.addresses.no' | t}}
+            </label>
+          </div>
+        </div>
+      </fieldset>
+      <div class="buttons clearfix">
+        <div class="pull-left"><a href="javascript:void(0);" onclick="Shopify.CustomerAddress.toggleNewForm(); return false;" class="btn btn-default">{{'customer.addresses.cancel' | t}}</a></div>
+        <div class="pull-right"><input class="btn btn-primary" type="submit" value="{{'customer.addresses.add' | t}}" /></div>
+      </div>
+      {%- endform -%}
+    </div>
+  </div>
+  <script type="text/javascript" charset="utf-8">
+    new Shopify.CountryProvinceSelector('address_country_new', 'address_province_new', {hideElement: 'address_province_container_new'});
+    {%- for address in customer.addresses -%}new Shopify.CountryProvinceSelector('address_country_{{address.id}}', 'address_province_{{address.id}}', {hideElement: 'address_province_container_{{address.id}}'});{%- endfor -%}
+  </script>
+</div>
+{%- if settings.sb_account_placement == 'right' -%}
+<div class="col-md-3{% if settings.sb_account_mobile %} hidden-sm hidden-xs{% endif %}">
+  {%- include 'sidebar-myaccount' -%}
+</div>
+{%- endif -%}

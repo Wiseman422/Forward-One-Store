@@ -1,0 +1,12 @@
+{%- assign MAX_MENU 				= 3  -%}
+{%- assign MAX_MENU_ITEM 		= 10 -%}
+{%- assign MAX_AG 					= 5  -%}
+{%- assign MAX_AG_COLUMN 		= 5  -%}
+{%- assign MAX_AG_MODULE 		= 2  -%}
+{%- assign MAX_SLIDES				= 3  -%}
+{%- assign MAX_LATEST_BLOGS			= 1  -%}
+{%- assign MAX_CUSTOM_WIDGETS 	= 5  -%}
+{%- assign MAX_TESTIMONIAL_ITEMS 	= 3  -%}
+{%- assign MAX_PRODUCTS_TABS			= 5  -%}
+{%- assign CURRENT_LAYOUT 				= '0' -%}
+{%- if template contains 'index' -%}{%- assign CURRENT_LAYOUT = '1' -%}{%- elsif template contains 'collection' -%}{%- assign CURRENT_LAYOUT = '2' -%}{%- elsif template contains 'product' -%}{%- assign CURRENT_LAYOUT = '3' -%}{%- elsif template contains 'cart' -%}{%- assign CURRENT_LAYOUT = '4' -%}{%- endif -%}

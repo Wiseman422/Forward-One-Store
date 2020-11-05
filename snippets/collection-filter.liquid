@@ -1,0 +1,37 @@
+{%- if collection.products_count > 0 -%}
+<div class="product-filter clearfix">
+  <div class="options">
+    {%- if settings.wishlist_enable -%}<div class="product-wishlist"><a href="{{pages[settings.wishlist_page].url}}">{{'collections.general.wishlist' | t}}</a></div>{%- endif -%}
+    <div class="button-group display" data-toggle="buttons-radio">
+      <button id="grid" class="btooltip{% if settings.collection_list_grid == '1' %} active{% endif %}" title="{{'collections.general.grid' | t | escape}}"><i class="fa fa-th-large"></i></button>
+      <button id="list" class="btooltip{% if settings.collection_list_grid == '0' %} active{% endif %}" title="{{'collections.general.list' | t | escape}}"><i class="fa fa-th-list"></i></button>
+    </div>
+  </div>
+  <div class="list-options">
+    <div class="sort advanced-sortby">
+      {%- assign sort_def = collection.sort_by | default: collection.default_sort_by | escape -%}
+      <select class="field">
+        <option value="manual"{% if sort_def == 'manual' %} selected="selected"{% endif %}>{{'collections.sorting.featured' | t}}</option>
+        <option value="price-ascending"{% if sort_def == 'price-ascending' %} selected="selected"{% endif %}>{{'collections.sorting.price_ascending' | t}}</option>
+        <option value="price-descending"{% if sort_def == 'price-descending' %} selected="selected"{% endif %}>{{'collections.sorting.price_descending' | t}}</option>
+        <option value="title-ascending"{% if sort_def == 'title-ascending' %} selected="selected"{% endif %}>{{'collections.sorting.az' | t}}</option>
+        <option value="title-descending"{% if sort_def == 'title-descending' %} selected="selected"{% endif %}>{{'collections.sorting.za' | t}}</option>
+        <option value="created-ascending"{% if sort_def == 'created-ascending' %} selected="selected"{% endif %}>{{'collections.sorting.date_ascending' | t}}</option>
+        <option value="created-descending"{% if sort_def == 'created-descending' %} selected="selected"{% endif %}>{{'collections.sorting.date_descending' | t}}</option>
+        <option value="best-selling"{% if sort_def == 'best-selling' %} selected="selected"{% endif %}>{{'collections.sorting.best_selling' | t }}</option>
+      </select>
+    </div>
+    <div class="limit">
+      <div class="select advanced-limit">
+        <select class="field">
+          {%- assign collection_limit = settings.collection_limit | default: 12 -%}
+          <option value="8"{% if template == 'collection' %} selected="selected"{% endif %}>{{collection_limit}}</option>
+          <option value="16"{% if template == 'collection.16' %} selected="selected"{% endif %}>16</option>
+          <option value="32"{% if template == 'collection.32' %} selected="selected"{% endif %}>32</option>
+          <option value="all"{% if template == 'collection.all' %} selected="selected"{% endif %}>{{'collections.general.all_products' | t }}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+{%- endif -%}

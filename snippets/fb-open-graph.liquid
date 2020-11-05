@@ -1,0 +1,23 @@
+{%- comment -%}
+This is for widgets that share content on Facebook.
+See the Facebook Linter: http://developers.facebook.com/tools/debug
+{%- endcomment -%}
+{%- if template contains 'product' -%}
+  <meta property="og:image" content="http:{{ product.featured_image.src | product_img_url: 'grande' }}" />
+  <meta property="og:image:secure_url" content="https:{{ product.featured_image.src | product_img_url: 'grande' }}" />
+{%- elsif template contains 'article' -%}
+  {%- assign img_tag = '<' | append: 'img' -%}
+  {%- if article.content contains img_tag -%}
+    {%- assign src = article.content | split: 'src="' -%}
+    {%- assign src = src[1] | split: '"' | first | remove: 'https:' | remove: 'http:' -%}
+    {%- if src -%}
+      <meta property="og:image" content="http:{{ src }}" />
+      <meta property="og:image:secure_url" content="https:{{ src }}" />
+    {%- endif -%}
+  {%- endif -%}
+{%- else -%}
+  {%- if settings.use_logo -%}
+    <meta property="og:image" content="http:{{ 'logo.png' | asset_url }}" />
+    <meta property="og:image:secure_url" content="https:{{ 'logo.png' | asset_url }}" />
+  {%- endif -%}
+{%- endif -%}

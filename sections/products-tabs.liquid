@@ -1,0 +1,165 @@
+{%- assign _skin = 'default' -%}
+{%- assign producstabs_snippet = 'section-productstabs-' | append: _skin -%}
+{%- include producstabs_snippet -%}
+{% schema %}
+  {
+    "name": "Products Tabs",
+	"class": "index-section section-wrapper",
+    "settings": [
+      	{
+          "type": "checkbox",
+          "id": "visible_on_mobile",
+          "label": "Show on Mobile",
+          "default": true
+        }
+	],
+	"blocks": [
+      {
+		"type": "ptab_collection",
+        "name": "Collection",
+        "settings": [
+		  {
+            "type": "header",
+            "content": "Content"
+          },
+          {
+			"type": "collection",
+            "id": "collection",
+            "label": "Choose a Collection"
+		  },
+          {
+            "type": "text",
+            "id": "ptab_heading",
+            "label": "Heading"
+          },
+		  {
+            "type": "header",
+            "content": "Product Image"
+          },
+          {
+            "type": "text",
+            "id": "ptab_img_width",
+            "label": "Width (in pixels)"
+          },
+          {
+            "type": "text",
+            "id": "ptab_img_height",
+            "label": "Height (in pixels)"
+          },
+		  {
+            "type": "header",
+            "content": "Grid Layout"
+          },
+          {
+            "type": "checkbox",
+            "id": "ptab_carousel",
+            "label": "Use Carousel"
+          },
+          {
+            "type": "text",
+            "id": "ptab_max",
+            "label": "Max items",
+			"default": "8"
+          },
+          {
+            "type": "select",
+            "id": "ptab_rows",
+            "label": "Rows",
+			"options": [
+              {
+                "value": "1",
+                "label": "1"
+              },
+              {
+                "value": "2",
+                "label": "2"
+              },
+			  {
+                "value": "3",
+                "label": "3"
+              },
+              {
+                "value": "4",
+                "label": "4"
+              },
+			  {
+                "value": "5",
+                "label": "5"
+              }
+            ],
+			"default": "1"
+          },
+          {
+            "type": "select",
+            "id": "ptab_items_per_row",
+            "label": "Items Per Row",
+			"options": [
+              {
+                "value": "1",
+                "label": "1"
+              },
+              {
+                "value": "2",
+                "label": "2"
+              },
+			  {
+                "value": "3",
+                "label": "3"
+              },
+              {
+                "value": "4",
+                "label": "4"
+              },
+			  {
+                "value": "5",
+                "label": "5"
+              },
+              {
+                "value": "6",
+                "label": "6"
+              }
+            ],
+			"default": "4"
+          }
+		]	
+      }
+	],
+    "presets": [
+      {
+        "name": "Products Tabs",
+        "category": "Content",
+        "settings": {
+          "visible_on_mobile": true
+        },
+		"blocks": [
+			{
+              "type": "ptab_collection",
+              "settings": {
+                "collection": "",
+                "ptab_heading": "Your Collection",
+                "ptab_img_width": "500",
+                "ptab_img_height": "500",
+                "ptab_carousel": true,
+                "ptab_max": "8",
+                "ptab_rows": "1",
+                "ptab_items_per_row": "4"
+              }
+            },
+			{
+              "type": "ptab_collection",
+              "settings": {
+                "collection": "",
+                "ptab_heading": "Your Collection",
+                "ptab_img_width": "500",
+                "ptab_img_height": "500",
+                "ptab_carousel": true,
+                "ptab_max": "8",
+                "ptab_rows": "1",
+                "ptab_items_per_row": "4"
+              }
+            }
+		]
+      }
+    ]
+  }
+{% endschema %}

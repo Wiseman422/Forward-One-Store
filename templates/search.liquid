@@ -1,0 +1,57 @@
+<div id="col-main" class="center-column col-md-12 product-search content-without-background">
+  <div id="mfilter-content-container" class="{%- if settings.collection_list_grid == '0' -%}list{%- else -%}grid{%- endif -%}">
+    <form action="/search" method="get">
+      <label class="control-label" for="input-search"><strong>{{'search.general.title' | t}}</strong></label>
+      <div class="row" id="content-search">
+        <div class="col-sm-4">
+          <input type="text" name="q" value="{{search.terms | escape}}" placeholder="{{'search.general.placeholder' | t}}" id="input-search" class="form-control" autocomplete="off" />
+        </div>
+      </div>
+      <input type="submit" value="{{'search.general.submit' | t}}" id="button-search" class="btn btn-primary" />
+      <input type="hidden" name="type" value="product" />
+    </form>
+    <h2 class="search-heading">{{'search.general.heading' | t}}</h2>
+    {%- if search.performed and search.results.size > 0 -%}
+    <div class="product-filter clearfix">
+      <div class="options">
+        {%- if settings.wishlist_enable -%}<div class="product-wishlist"><a href="{{pages[settings.wishlist_page].url}}">{{'collections.general.wishlist' | t}}</a></div>{%- endif -%}
+        <div class="button-group display" data-toggle="buttons-radio">
+          <button id="grid" class="btooltip{% if settings.collection_list_grid == '1' %} active{% endif %}" title="{{'collections.general.grid' | t | escape}}"><i class="fa fa-th-large"></i></button>
+          <button id="list" class="btooltip{% if settings.collection_list_grid == '0' %} active{% endif %}" title="{{'collections.general.list' | t | escape}}"><i class="fa fa-th-list"></i></button>
+        </div>
+      </div>
+    </div>
+    
+    {%- assign search_limit = settings.collection_limit | default: 12 -%}
+    {%- paginate search.results by search_limit -%}
+    <div id="sandbox">
+      <div class="product-list">
+        {%- for product in search.results -%}
+        {%- include 'product-item2' -%}
+        {%- endfor -%}
+      </div>
+      {%- assign grid_row = settings.collection_product_per_pow2 | plus:0 -%}
+      {%- assign grid_class = 3 -%}
+      {%- if settings.collection_product_per_pow2 == '6' -%}{%- assign grid_class = 2 -%}{%- elsif settings.collection_product_per_pow2 == '5' -%}{%- assign grid_class = 25 -%}{%- elsif settings.collection_product_per_pow2 == '3' -%}{%- assign grid_class = 4 -%}{%- endif -%}
+      <div class="product-grid">
+        <div class="row">
+          {%- assign row_fluid = 0 -%}
+          {%- for product in search.results -%}
+          {%- assign row_fluid = row_fluid | plus:1 -%}
+          {%- assign row_temp = row_fluid | divided_by:grid_row | floor | times:grid_row -%}
+          {%- assign grid_r = row_fluid | minus:row_temp -%}
+          {%- if row_fluid > grid_row and grid_r == 1 -%}{{'</div><div class="row">'}}{%- endif -%}
+          <div class="col-sm-{{grid_class}} col-xs-6">
+            {%- include 'product-item' -%}
+          </div>
+          {%- endfor -%}
+        </div>
+      </div>
+    </div>
+    {%- include 'pagination' -%}
+    {%- endpaginate -%}
+    {%- else -%}
+    <p class="empty">{{'search.general.no_products' | t}}</p>
+    {%- endif -%}
+  </div>
+</div>

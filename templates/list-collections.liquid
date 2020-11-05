@@ -1,0 +1,26 @@
+<div id="col-main" class="center-column content-with-background">
+  <div class="row categories-wall">
+  {%- for my_collection in collections -%}
+  {%- unless my_collection.handle == 'all' -%}
+  <div class="col-sm-4">
+    <div class="category-wall">
+      <div class="image">
+        <a href="{{my_collection.url}}">
+          {%- if my_collection.image -%}
+          <img src="{{my_collection.image.src | collection_img_url: 'large'}}" alt="{{my_collection.title}}" />
+          {%- else -%}
+          <img src="{{my_collection.products.first.featured_image | product_img_url: 'large'}}" alt="{{my_collection.title}}" />
+          {%- endif -%}
+        </a>
+      </div>
+      <h3><a href="{{my_collection.url}}">{{my_collection.title}}</a></h3>
+      <ul>
+        <li>{{my_collection.products_count}} {{my_collection.products_count | pluralize: 'collections.general.product', 'collections.general.products' | t}}</li>
+      </ul>
+      <a href="{{my_collection.url}}" class="more-categories">{{'collections.general.more_products' | t}}</a>
+    </div>
+  </div>
+  {%- endunless -%}
+  {%- endfor -%}
+  </div>
+</div>

@@ -1,0 +1,82 @@
+{% include "ra-shortcode-revslider-104" %}
+
+{{ content_for_index }}
+
+{%- comment -%}
+{%- include 'modules-init' -%}
+{%- if settings.pos_preface_left_use or settings.pos_preface_right_use -%}
+<div class="row">
+  <div class="col-sm-8 orderable">
+    {%- if settings.pos_preface_left_use -%}
+    {%- include 'pos-preface-left' -%}
+    {%- endif -%}
+  </div>
+  <div class="col-sm-4 orderable">
+    {%- if settings.pos_preface_right_use -%}
+    {%- include 'pos-preface-right' -%}
+    {%- endif -%}
+  </div>
+</div>
+{%- endif -%}
+
+{%- if settings.pos_preface_fullwidth_use -%}
+<div class="row">
+  <div class="col-sm-12 orderable">
+    {%- include 'pos-preface-fullwidth' -%}
+  </div>
+</div>
+{%- endif -%}
+
+<div class="row">	
+  {%- if settings.pos_column_left_use -%}
+  <div class="col-md-3 orderable" id="column_left">
+    {%- include 'pos-column-left' -%}
+  </div>
+  {%- endif -%}
+  
+  {%- assign _grid_center = 12 -%}
+  {%- if settings.pos_column_left_use -%}
+  {%- assign _grid_center = 9 -%}
+  {%- endif -%}
+
+  <div class="col-md-{{_grid_center}} orderable">
+    {%- if settings.pos_content_big_column_use -%}
+    {%- include 'pos-content-big-column' -%}
+    {%- endif -%}
+    <div class="row" data-order="1000">
+      {%- assign _grid_content_top = 12 -%}
+      {%- assign _grid_content_right = 3 -%}
+
+      {%- if settings.pos_column_right_use -%}
+      {%- if _grid_center == 9 -%}
+      {%- assign _grid_content_top = 8 -%}
+      {%- assign _grid_content_right = 4 -%}
+      {%- else -%}
+      {%- assign _grid_content_top = 9 -%}
+      {%- assign _grid_content_right = 3 -%}
+      {%- endif -%}
+      {%- endif -%}
+
+      <div class="col-md-{{_grid_content_top}} orderable">
+        {%- if settings.pos_content_top_use -%}
+        {%- include 'pos-content-top' -%}
+        {%- endif -%}
+      </div>
+
+      {%- if settings.pos_column_right_use -%}
+      <div class="col-md-{{_grid_content_right}} orderable">
+        {%- include 'pos-column-right' -%}
+      </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+<div class="row">	
+  <div class="col-sm-12 orderable">	
+    {%- if settings.pos_content_bottom_use -%}
+    {%- include 'pos-content-bottom' -%}
+	{%- endif -%}
+  </div>
+</div>
+{%- endcomment -%}

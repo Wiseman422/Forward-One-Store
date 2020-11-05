@@ -1,0 +1,149 @@
+{%- if section.blocks.size > 0 -%}
+<div data-placement_fullwidth="{%- if section.settings.placement_fullwidth -%}1{%- else -%}0{%- endif -%}"
+     id="banner-{{section.id}}" class="row banners text-center{%- if section.settings.visible_on_mobile == false -%}{{" hidden-xs"}}{%- endif-%}" data-section-id="{{ section.id }}" data-section-type="banner">
+ {%- for block in section.blocks limit: section.blocks.size -%}
+  {%- assign image_width = block.settings.image_width -%}
+  {%- assign image_height = block.settings.image_height -%}
+  {%- if block.settings.banner_width != '0' -%}
+  {%- capture image_size %}{{ image_width }}x{{ image_height }}{%- endcapture -%}
+  <div class="{{ block.settings.banner_width }}" {{ block.shopify_attributes }}>
+    <a href="{{block.settings.banner_link}}">
+      {%- if block.settings.banner_image != blank -%}
+      {%- assign img_url = block.settings.banner_image | img_url: image_size, crop: 'center' -%}
+      {%- else -%}
+      {%- assign img_url = '' -%}
+      {%- endif -%}
+      {%- if img_url == blank -%}
+      <img src="{{"noimage_500_300.png" | asset_img_url : "master"}}" alt="" />
+      {%- else -%}
+      <img src="{{img_url}}" alt="" />
+      {%- endif -%}
+    </a>
+  </div>
+  {%- endif -%}
+ {%- endfor -%}
+</div>
+{%- endif -%}
+{% schema %}
+  {
+    "name": "Banner",
+    "class": "index-section section-wrapper",
+    "max_blocks": 3,
+    "settings": [
+	  {
+        "type": "checkbox",
+        "id": "placement_fullwidth",
+        "label": "Force Full Width"
+      },
+      {
+        "type": "checkbox",
+        "id": "visible_on_mobile",
+        "label": "Show on Mobile",
+        "default": true
+      }
+    ],
+    "blocks": [
+    {
+      "type": "image",
+      "name": "Image",
+      "settings": [
+		{
+		  "type": "header",
+          "content": "Image"
+		},
+        {
+          "type": "image_picker",
+          "id": "banner_image",
+          "label": "Pick an Image"
+        },
+        {
+          "type": "text",
+          "id": "image_width",
+          "label": "Width (in pixels)",
+          "default": "500"
+		},
+        {
+          "type": "text",
+          "id": "image_height",
+          "label": "Height (in pixels)",
+          "default": "300"
+		},
+		{
+		  "type": "header",
+          "content": "Content"
+		},
+		{
+        "type": "text",
+          "id": "banner_link",
+          "label": "Link",
+          "default": "#"
+        },
+		{
+          "type": "select",
+          "id": "banner_width",
+          "label": "Banner Width",
+          "options": [
+            {
+              "value": "0",
+              "label": "Hidden"
+            },
+            {
+              "value": "col-sm-3",
+              "label": "25%"
+            },
+            {
+              "value": "col-sm-4",
+              "label": "33%"
+            },
+            {
+              "value": "col-sm-5",
+              "label": "42%"
+            },
+            {
+              "value": "col-sm-6",
+              "label": "50%"
+            },
+            {
+              "value": "col-sm-7",
+              "label": "58%"
+            },
+            {
+              "value": "col-sm-8",
+              "label": "67%"
+            },
+            {
+              "value": "col-sm-9",
+              "label": "75%"
+            },
+            {
+              "value": "col-sm-12",
+              "label": "100%"
+            }
+          ],
+          "default": "col-sm-4"
+        }
+      ]
+    }
+    ],
+    "presets": [
+      {
+        "name": "Banner",
+        "category": "Banners",
+        "settings": {
+			"visible_on_mobile": true
+        },
+        "blocks": [
+          {
+            "type": "image"
+          },
+          {
+            "type": "image"
+          },
+          {
+            "type": "image"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

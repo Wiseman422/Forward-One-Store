@@ -1,0 +1,20 @@
+{%- comment -%}----- Custom HTML -----{%- endcomment -%}
+{%- if settings.sb_product_html -%}
+<div class="product-block">
+  {%- if settings.sb_product_html_heading != '' -%}
+  <div class="title-block">{{settings.sb_product_html_heading}}</div>
+  <div class="strip-line"></div>
+  {%- endif -%}
+  <div class="block-content">
+    {{settings.sb_product_html_content}}
+  </div>
+</div>
+{%- endif -%}
+{%- comment -%}----- Banner -----{%- endcomment -%}
+{%- if settings.sb_product_banner -%}
+<div class="banners hidden-xs hidden-sm">
+  <div class="clearfix">
+    <a href="{{settings.sb_product_banner_link}}"><img src="{{'sb_product_banner.png' | asset_url}}" alt="Banner" /></a>
+  </div>
+</div>
+{%- endif -%}

@@ -1,0 +1,63 @@
+{%- if cartblock == 'header' -%}
+<div id="cart_block" class="dropdown">
+  <div class="cart-heading dropdown-toogle" data-hover="dropdown" data-toggle="dropdown" onclick="window.location.href = '/cart'">
+    <i class="cart-count"><span class="total_count_ajax">{{ cart.item_count }}</span></i>
+    <i class="cart-icon">
+      <img src="{{ 'icon-cart-hover.png' | asset_url }}" class="cart-icon-hover" alt="" />
+      <img src="{{ 'icon-cart.png' | asset_url }}" class="cart-icon-standard" alt="" />
+    </i>
+    <p>
+      <strong id="total_price_ajax">
+        <span class="total_price"><span class="money">{{ cart.total_price | money }}</span></span>
+      </strong>
+    </p>
+  </div>
+  <div class="dropdown-menu" id="cart_content">
+    <div class="cart_content_ajax">
+      {%- if cart.items == empty -%}
+      <div class="empty">{{ 'general.cart_info.cart_empty_html' | t }}</div>
+      {%- else -%}
+      <div class="mini-cart-info">
+        <table>
+          <tbody>
+            {%- for item in cart.items -%}
+            <tr>
+              <td class="image">		        
+                <a href="{{item.url }}">
+                  <img src="{{ item | img_url: 'small' }}" alt="{{ item.title | escape }}" /></a>
+              </td>
+              <td class="name">
+                <a href="{{item.url }}">{{ item.product.title }}</a>
+                <div>
+                  {%- if item.product.variants.size > 1 -%}
+                  <small>{{ item.variant.title }}</small>
+                  {%- endif -%}
+                </div>
+              </td>
+              <td class="quantity">{{ item.quantity }}</td>
+              <td class="total"><span class="money">{{ item.price | money }}</span></td>
+              <td class="remove"><a href="javascript:void(0)" onclick="Shopify.removeItem({{item.variant_id}})" title="{{'general.cart_info.remove_this_item' | t  | escape}}">x</a></td>
+            </tr>
+			{%- endfor -%}
+          </tbody>
+        </table>
+      </div>
+      <div class="mini-cart-total">
+        <table>
+          <tbody>
+            <tr>
+              <td class="right"><b>{{ 'general.cart_info.sub_total' | t }}</b></td>
+              <td class="right"><span class="money">{{ cart.total_price | money }}</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="checkout">
+        <a href="/cart" class="button btn-default">{{ 'general.cart_info.view_shopping_bag' | t }}</a>
+        <a href="/checkout" class="button">{{ 'general.cart_info.checkout' | t }}</a>
+      </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+{%- endif -%}

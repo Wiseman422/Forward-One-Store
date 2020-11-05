@@ -1,0 +1,1149 @@
+<style type="text/css">
+  
+  button > * {
+    pointer-events: none;
+  }
+</style>
+<script type="text/javascript">
+//Isolate script scope
+(function (){
+  window.baMsg = {
+     "remote_id": "10012491812",
+     "shopify_domain": "go-forward-solutions.myshopify.com",
+     "fb_page_id": "103711234339955",
+     "locale": "en_US",
+     "app_id": 369783430202516,
+     "use_stm_callback": "",
+     "user_ref": 'ba_10012491812_' + Math.random().toString(36).substring(5) + '_' + Math.floor(Math.random() * (9999999 - 1000000)),
+     "atc_preference": "fb",
+     "active_fb_atc_shown": false,
+     "active_sms_atc_shown": false,
+     "app_url": "/apps/ba_fb_app",
+     "page_url": window.location.href,
+     "is_preview": (window.location.href.indexOf("ba-preview") != -1),
+     "is_generating": (window.location.href.indexOf("ba_action=generate") != -1),
+     "fb_active": true,
+     "sms_active": false,
+     "push_active": false,
+     "ab_active": false
+  };
+
+  baMsg.debug = function (enabled) {
+    if (enabled === false) {
+      baMet.destroyCookie("baMsg_debug");
+    } else {
+      baMet.setCookie("baMsg_debug", "t", 365 * 24 * 60);
+    }
+    return true;
+  };
+
+  baMsg.log = function(message){
+    if (baMet.getCookie("baMsg_debug")) {
+      window.console.log(message);
+    }
+  }
+
+
+  function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, '\\$&');
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+  }
+
+  function getUrlParam(paramName) {
+    var params = {};
+    window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(str,key,value) {
+      params[key] = value;
+    });
+    return params[paramName];
+  }
+
+  function hasFlag(flag){
+    return window.baMsg.settings.flags[flag] == true
+  }
+
+  function getAtcButton(){
+    var addToCartBtn = document.querySelector('[name=add]');
+    if (!addToCartBtn || addToCartBtn.length === 0){
+      addToCartBtn = document.getElementsByClassName("btn-addtocart")[0];
+    }
+    if (!addToCartBtn || addToCartBtn.length === 0){
+      addToCartBtn = document.getElementsByClassName("button-cart")[0];
+    }
+    if (!addToCartBtn || addToCartBtn.length === 0){
+      addToCartBtn = document.getElementsByClassName("product-add")[0];
+    }
+    if (!addToCartBtn || addToCartBtn.length === 0){
+      addToCartBtn = document.getElementsByClassName("add-to-cart")[0] !== undefined ? document.getElementsByClassName("add-to-cart")[0].getElementsByTagName('input')[0] : null;
+    }
+    return addToCartBtn;
+  }
+
+  function canDisplayByDevice(devices) {
+    if (devices !== 'all') {
+      var isMobile = (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+      if (devices === 'desktop' && isMobile){ return false;}
+      if (devices === 'mobile' && !isMobile){ return false;}
+    }
+    return true;
+  }
+
+  function getProductForm() {
+    var form = document.getElementById('add-item-form');
+    if (!form || form.length === 0){
+        form = document.getElementsByClassName("product-form")[1];
+    }
+    if (!form || form.length === 0){
+        form = document.querySelector("form[action='/cart/add']");
+    }
+    if (!form || form.length === 0){
+        form = document.querySelector("form[action^='/cart/add']");
+    }
+    if (!form || form.length === 0){
+        form = document.querySelector("form[action$='/cart/add']");
+    }
+    if (!form || form.length === 0){
+        form = document.querySelector("form[action='/cart/add.js']");
+    }
+    if (!form || form.length === 0){
+        form = document.querySelector("form[action='/cart/add?return=/']");
+    }
+    if (!form || form.length === 0){
+        form = document.getElementsByClassName("product-form")[0];
+    }
+    if (!form || form.length === 0){
+        form = document.getElementsByClassName("btn-addtocart")[0];
+    }
+    return form
+  }
+
+  function canDisplayByRules(rules) {
+    var pageURL = window.location.href;
+    var url = new URL(pageURL);
+    var pathname = (url.pathname.length === 1) ? '' : url.pathname.length;
+    var urlWOParams = url.origin + pathname;
+
+    var canDisplay = rules.length === 0;
+
+    for (var i = 0; i < rules.length; i++) {
+      var rule = rules[i];
+
+      if (rule.rule === 'match') {
+        if (rule.operator === 'true') {
+          if (rule.string === pageURL || rule.string === urlWOParams) {
+            canDisplay = true;
+          }
+        } else if (rule.string === pageURL || rule.string === urlWOParams) {
+          canDisplay = false;
+          break;
+        }
+      }
+
+      if (rule.rule === 'begin_with') {
+        var stringLength = rule.string.length;
+
+        if (rule.operator === 'true') {
+          if (rule.string === pageURL.substr(0, stringLength) || rule.string === urlWOParams.substr(0, stringLength)) {
+            canDisplay = true;
+          }
+        } else if (rule.string === pageURL.substr(0, stringLength) || rule.string === urlWOParams.substr(0, stringLength)) {
+          canDisplay = false;
+          break;
+        }
+      }
+
+      if (rule.rule === 'contains') {
+        if (rule.operator === 'true') {
+          if (pageURL.indexOf(rule.string) !== -1 || urlWOParams.indexOf(rule.string) !== -1) {
+            canDisplay = true;
+          }
+        } else if (pageURL.indexOf(rule.string) !== -1 || urlWOParams.indexOf(rule.string) !== -1) {
+          canDisplay = false;
+          break;
+        }
+      }
+    }
+
+    return canDisplay;
+  }
+
+  function updateSubscriberHash(updateHash){
+    var updatedSubscriberHash = window.baMsg.subscriber_hash;
+    for (var prop in updateHash) {
+      updatedSubscriberHash[prop] = updateHash[prop];
+    }
+    var subscriberKey = "ba_msg_subscriber_" + baMet.getVisitorToken();
+    localStorage.setItem(subscriberKey, JSON.stringify(updatedSubscriberHash));
+  }
+
+  function applyMet(metName){
+    eventHash = {}
+    //baMet.apply(metName, eventHash, "ba_msg");
+  }
+
+  function getCartSessionId(){
+    return baMet.getCookie("baMet_cs_id");
+  }
+
+  function isHidden(el) {
+    return (el.offsetParent === null)
+  }
+
+  function handleAtcClick(event){
+    var subscriberHash = window.baMsg.subscriber_hash;
+    var atcPref = window.baMsg.atc_preference;
+    if (atcPref == 'fb'){
+      window.baMsg.showFbAtcModal(event);
+    } else if (atcPref == 'sms'){
+      window.baMsg.showSmsAtcModal(event);
+    }
+  }
+
+  function listentoAtc(){
+    window.baMet.onBaEv("click", ".product-form__cart-submit, .product-form__cart-submit span, #AddToCart-product-template, .product-atc-btn, .product-menu-button.product-menu-button-atc, .button-cart, .product-add, .add-to-cart input, .btn-addtocart, [name=add]", function (e){
+      baMsg.log(e)
+      var addToCartBtn = (e.target);
+      window.baMsg.active_atc = addToCartBtn;
+      addToCartBtn.classList.add('ba-click-ready');
+      if (window.baMsg.fb_active && window.baMsg.fb_page_id){
+        try {
+          handleAtcClick(e)
+        } catch(err){
+          console.log(err);
+        }
+      }
+    });
+  }
+
+  function documentReady(callback) {
+    document.readyState === "interactive" || document.readyState === "complete" ? callback() : document.addEventListener("DOMContentLoaded", callback);
+  }
+
+documentReady(function() {
+  var baFbPresent = (document.getElementsByTagName('head')[0].innerHTML.search("ba_fb_" + window.baMsg.remote_id) > 0);
+  if (!baFbPresent){return;}
+
+  window.baMsg.visitor_token = window.baMet.getVisitorToken();
+  window.baMsg.session_token = window.baMet.getVisitToken();
+  window.baMsg.cart_uid  = baMet.getCookie('baMet_cs_id');
+  window.baMsg.browser_info = window.baMet.getBrowserInfo();
+
+  var baSubscriberKey = "ba_msg_subscriber_" + window.baMsg.visitor_token;
+  var rawSubscriber   = localStorage.getItem(baSubscriberKey);
+  var baSubscriberHash = JSON.parse(rawSubscriber || "{}");
+  window.baMsg.subscriber_hash = baSubscriberHash;
+
+  var baId = window.baMet.getCookie("baid");
+  var ba_fb_opted_in_cookie = window.baMet.getCookie("ba_opted_in");
+
+  if(baId && ba_fb_opted_in_cookie && !rawSubscriber){
+    window.baMsg.handle_legacy = true;
+    //This is a V1 subscriber. Upgrade to V2
+    var fbchk_opted_in_cookie = window.baMet.getCookie("fbchk_opted_in");
+    var ba_modal_opted_in_cookie = window.baMet.getCookie("ba_modal_opted_in");
+    var ba_atc_popup_opted_in_cookie = window.baMet.getCookie("ba_atc_popup_opted_in");
+    var rightNow = parseInt(new Date().getTime());
+    var updateHash = {legacy: true};
+    if (ba_fb_opted_in_cookie){
+      updateHash["ba_fb_opted_in"] = rightNow;
+    }
+    if (fbchk_opted_in_cookie){
+      updateHash["ba_fbchk_opted_in"] = rightNow;
+    }
+    if (ba_modal_opted_in_cookie){
+      updateHash["ba_fb_modal_opted_in"] = rightNow;
+    }
+    if (ba_atc_popup_opted_in_cookie){
+      updateHash["ba_fb_atc_popup_opted_in"] = rightNow;
+    }
+    updateSubscriberHash(updateHash);
+    var data = {
+      action_type: 'update_legacy_sub', session_token: baId,
+      visitor_token: window.baMsg.visitor_token, cart_uid: window.baMsg.cart_uid,
+      tz_offset: window.baMsg.browser_info.tz_offset, cart_token: window.baMet.getCookie('cart')
+    }
+    baMet.sendRequest(window.baMsg.app_url, data, function(resp) {
+      baMsg.log('legacy sub updated')
+      updateSubscriberHash({legacy_updated: rightNow});
+    });
+  }
+
+
+  if (window.BoosterApps.common.customer && !window.baMsg.subscriber_hash.customer_synced_at){
+    var data = {
+      action_type: 'sync_customer', visitor_token: window.baMsg.visitor_token,
+      sync_data: window.BoosterApps.common.customer
+    }
+    baMet.sendRequest(window.baMsg.app_url, data, function(resp) {
+      baMsg.log('sub sync updated')
+      rightNow = parseInt(new Date().getTime());
+      updateSubscriberHash({customer_synced_at: rightNow, cus_id: window.BoosterApps.common.customer.id});
+    });
+  }
+
+
+  window.baMsg.settings = {
+    fb_base: {
+      "id":48,
+      "shop_id":10012491812,
+      "active": 1,
+      "visible":1,
+      "type":"default",
+      "text":"Stay up to date with order notifications",
+      "checked_text": "Your discount: %discountCode!",
+      "placement": "under_cart",
+      "text_placement": "above",
+      "background_color": "#fff",
+      "icon_background_color": "#f7f7f7",
+      "color": "#000",
+      "checked_color": "#000",
+      "border_color":"#e5e5e5",
+      "font_size":14,
+      "font_style":"normal",
+      "margin_top":15,
+      "margin_bottom":10,
+      "icon":"discount_1",
+      "checked_icon":"check_1",
+      "border_width":1,
+      "border_style":"solid",
+      "border_radius":5,
+      "align":"left",
+      "button_text":"Get Discount Code",
+      "button_background_color":"#F6F6F6",
+      "button_text_color":"#555555",
+      "button_font_size":14,
+      "button_font_style":"bold",
+      "button_border_color":"#eee",
+      "button_border_width":1,
+      "button_border_radius":5,
+      "discount_code":"YOUR_DISCOUNT_CODE_HERE",
+      "subtitle": ""
+    },
+    fb_modal: {
+      "shop_id":10012491812,
+      "active":0,
+      "title":"Hi! Opt-in and recieve a discount!",
+      "subtitle":"Just click on &quot;Send To Messenger&quot; and you will automatically be opted-in!",
+      "submitted_title":"Thanks for opt-ing in!",
+      "submitted_subtitle":"Your discount code is: %discountCode!",
+      "button_text":"View in Messenger",
+      "send_color":"blue",
+      "send_size":"large",
+      "background_color":"#fff",
+      "title_color":"#000",
+      "subtitle_color":"#808080",
+      "button_color":"#fff",
+      "button_text_color":"#000",
+      "border_color":"#eee",
+      "display":"immediately",
+      "delay":3,
+      "devices":"all",
+      "message":"Hi! Thanks for opt-ing in. Your discount code is: %discountCode! Enjoy!",
+      "image_name":"",
+      "submitted_image_name":"",
+      "image_placement":"above_title",
+      "submitted_image_placement":"above_title",
+      "discount_code":"DISCOUNT_CODE_HERE",
+      "rules": JSON.parse('[] ')
+    },
+    fb_atc_popup: {
+      "shop_id":10012491812,
+      "active":1,
+      "title":"Join us on Messenger",
+      "paragraph":"Sign up and gain access to new products, exclusive deals, and discounts before anybody else!",
+      "no_thanks_text":"No thanks",
+      "close_button":"1",
+      "plugin_type":"send_to_messenger",
+      "button_cta":"SEND_TO_MESSENGER",
+      "button_cta_color":"blue",
+      "header_bg_color":"#f4f6f8",
+      "body_bg_color":"#fff",
+      "header_text_color":"#626974",
+      "paragraph_text_color":"#626974",
+      "no_thanks_text_color":"#626974"
+    }
+  }
+
+  //update last seen at if subscriber active
+  if (window.baMsg.subscriber_hash.ba_fb_opted_in && window.baMsg.ab_active && window.baMsg.cart_uid && !window.baMsg.handle_legacy){
+    var data = {"action_type": 'heartbeat', visitor_token: window.baMsg.visitor_token, "cart_uid": window.baMsg.cart_uid}
+    baMet.sendRequest(window.baMsg.app_url, data, function(resp) {
+      baMsg.log('heartbeat recorded')
+    });
+  }
+
+  if (window.baMsg.is_generating == true){
+    var cartUid = getParameterByName('cart_uid');
+    var baId    = getParameterByName('baid');
+    if (cartUid || baId){
+      var abStep = getParameterByName('ab_step');
+      var baCheckoutUrl = getParameterByName('ba_checkout_url');
+      var baChannel = getParameterByName('channel');
+      var overlayWrapper = document.createElement('div');
+      overlayWrapper.id = 'ba-overlay';
+      overlayWrapper.setAttribute('style', 'position: fixed;display: block;width: 100%;height: 100%;top: 0;left: 0;right: 0;bottom: 0;background-color: rgba(0,0,0,0.8);z-index: 9999999999999;cursor: pointer;');
+      var overlayTextDiv = document.createElement('div');
+      overlayTextDiv.innerHTML = "Please wait... Generating cart";
+      overlayTextDiv.setAttribute('style', 'position: absolute;top: 50%;left: 50%;font-size: 22px;color: white;transform: translate(-50%,-50%);-ms-transform: translate(-50%,-50%);');
+      overlayWrapper.appendChild(overlayTextDiv);
+      document.getElementsByTagName('body')[0].appendChild(overlayWrapper);
+
+      //get the cart
+      var data = {"action_type": 'generate_cart', "ab_step": + abStep,
+        "cart_uid": window.baMsg.cart_uid, "baid": baId, "channel": baChannel
+      }
+      baMet.sendRequest(window.baMsg.app_url, data, function(resp) {
+        window.location = baCheckoutUrl + "?attributes[from]=Booster%20Apps%20Abandoned%20Cart%20Notification";
+      });
+      return;
+    }
+  }
+
+  function boosterFBLoader(){
+  this.load = function () {
+    (function (d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)){return;}
+      js = d.createElement(s);
+      js.id = id;
+      // js.src = "https://connect.facebook.net/" + locale + "/sdk.js";
+      js.src = "https://connect.facebook.net/" + window.baMsg.locale + "/sdk/xfbml.customerchat.js";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+
+    window.fbLoaded = (new Deferred());
+    window.fbAsyncInit = function () {
+      initFb();
+      window.fbScriptHasLoaded = true;
+    };
+
+    setTimeout(function () {
+      if (!window.fbScriptHasLoaded) {
+        if (typeof FB === 'undefined') {
+          setTimeout(function () {
+            initFb();
+          }, 2000);
+        } else {
+          initFb();
+        }
+      }
+    }, 3000);
+  };
+
+  function initFb() {
+    FB.init({
+      appId: window.baMsg.app_id,
+      autoLogAppEvents: true,
+      xfbml: true,
+      version: 'v3.0'
+    });
+    window.fbLoaded.resolve();
+  }
+
+  function Deferred() {
+    var self = this;
+    this.promise = new Promise(function (resolve, reject) {
+      self.reject = reject;
+      self.resolve = resolve;
+    });
+  }
+
+  this.loadChat = function (chatSettings) {
+    var isChatInPreview = (document.location.search.indexOf("ba-chat-preview") != -1)
+
+    if (chatSettings.active || isChatInPreview) {
+      window.fbLoaded.promise.then(function(){
+        var chatBox = document.createElement('div');
+        chatBox.classList = 'fb-customerchat';
+        chatBox.setAttribute('page_id', window.baMsg.fb_page_id);
+        chatBox.setAttribute('greeting_dialog_display', chatSettings.minimized ? 'hide' : 'show');
+        chatBox.setAttribute('theme_color', chatSettings.theme_color);
+        var dataRef = 'CUSTOMER_CHAT_PLUGIN:customer_chat_plugin:';
+
+        if (window.baMsg.visitor_token !== ''){
+          dataRef += window.baMsg.visitor_token;
+        }
+        chatBox.setAttribute('ref', dataRef);
+
+        if (chatSettings.logged_in_greeting !== null){chatBox.setAttribute('logged_in_greeting', chatSettings.logged_in_greeting);}
+        if (chatSettings.logged_out_greeting !== null){chatBox.setAttribute('logged_out_greeting', chatSettings.logged_out_greeting);}
+        document.body.appendChild(chatBox);
+      });
+    }
+  };
+
+  return this;
+}
+
+function hideFbOptIns(element){
+  if (element == 'atc_popup'){
+    document.getElementById('fb-messenger-checkbox').setAttribute('style', 'display:none;');
+  }
+}
+
+function trackFbOptIn(cartData, element){
+  var parsedCartData = JSON.parse(cartData);
+  var data = {
+    channel: 'fb',
+    element: element,
+    visitor_token: window.baMsg.visitor_token,
+    fb_pid: window.baMsg.fb_page_id,
+    cart_data: parsedCartData,
+    action_type: 'track_opt_in',
+    user_ref: window.baMsg.user_ref,
+    cart_uid: window.baMsg.cart_uid,
+    tz_offset: window.baMsg.browser_info.tz_offset,
+    os: window.baMsg.browser_info.os,
+    browser: window.baMsg.browser_info.browser
+  };
+  baMet.sendRequest(window.baMsg.app_url, data, function(){
+    baMsg.log(data);
+    hideFbOptIns(element);
+  });
+}
+
+
+function boosterFbCheckboxes() {
+  var self    = this;
+  this.alignWraper = function(wrapperElement,align)  {
+    //Default value is center
+    wrapperElement.style.marginRight = 'auto';
+    wrapperElement.style.marginLeft  = 'auto';
+    if (align === 'left')  {
+      wrapperElement.style.marginLeft = '0px';
+    }
+    if (align === 'right')  {
+      wrapperElement.style.marginRight = '0px';
+    }
+  }
+
+  
+  var checkboxChecked = !1;
+  this.generate = function(settings) {
+    if (window.baMsg.page_url.indexOf('products') !== -1) {
+
+      if (!window.baMsg.is_preview){
+        if (!settings.active){return;}
+        if (window.baMsg.subscriber_hash.ba_fbchk_opted_in){return;}
+        if (window.baMsg.subscriber_hash.ba_fb_opted_in){return;}
+      }
+
+      var form = getProductForm();
+      if (!form || form.length === 0 || (window.baMsg.subscriber_hash.ba_fbchk_opted_in && !window.baMsg.is_preview)){
+        return;
+      }
+      var addToCartBtn = getAtcButton();
+      //add listener here for FB regulations
+      if (addToCartBtn !== null && addToCartBtn !== undefined){
+        addToCartBtn.addEventListener('click', confirmFbChkOptIn('regular', false));
+      } else {
+        baMsg.log('addToCartBtn undefined');
+      }
+      var messengerWrapper = document.createElement('div');
+      messengerWrapper.style.backgroundColor = settings.background_color;
+      messengerWrapper.style.color = settings.color;
+      messengerWrapper.style.fontSize = settings.font_size + 'px';
+      messengerWrapper.style.marginTop = settings.margin_top + 'px';
+      messengerWrapper.style.marginBottom = settings.margin_bottom + 'px';
+      messengerWrapper.style.borderColor = settings.border_color;
+      messengerWrapper.style.borderWidth = settings.border_width + 'px';
+      messengerWrapper.style.borderStyle = settings.border_style;
+      messengerWrapper.style.borderRadius = settings.border_radius + 'px';
+      messengerWrapper.style.padding = '0 10px';
+      messengerWrapper.style.display = 'block';
+      messengerWrapper.style.textAlign = 'center';
+      messengerWrapper.style.WebkitTransition = 'opacity 1s';
+      messengerWrapper.style.MozTransition = 'opacity 1s';
+      messengerWrapper.style.transition = 'opacity 1s';
+      messengerWrapper.style.clear = 'both';
+      messengerWrapper.style.minWidth = '250px';
+      if (settings.font_style === 'italic-bold') {
+        messengerWrapper.style.fontWeight = 'bold';
+        messengerWrapper.style.fontStyle = 'italic';
+      } else {
+        messengerWrapper.style.fontWeight = settings.font_style;
+        messengerWrapper.style.fontStyle = settings.font_style;
+      }
+      var buttonWidth = (addToCartBtn !== null && addToCartBtn !== undefined) ? addToCartBtn.offsetWidth : 0;
+      var selects = form.getElementsByTagName('select');
+      messengerWrapper.style.width = (buttonWidth > 0 && (selects.length === 0 || selects[0].offsetParent === null)) ? buttonWidth + 'px' : 'auto';
+      this.alignWraper(messengerWrapper,settings.align)
+      var messengerDiv = document.createElement('div');
+      messengerDiv.classList = 'fb-messenger-checkbox';
+      messengerWrapper.id = 'fb-messenger-checkbox';
+      messengerDiv.setAttribute('style', 'display:inline-block!important;position:relative!important;max-width:180px;overflow:hidden;');
+      messengerDiv.setAttribute('origin', 'https://forward1store.com');
+      messengerDiv.setAttribute('page_id', window.baMsg.fb_page_id);
+      messengerDiv.setAttribute('messenger_app_id', window.baMsg.app_id);
+      messengerDiv.setAttribute('user_ref', window.baMsg.user_ref);
+      messengerDiv.setAttribute('prechecked', !0);
+      messengerDiv.setAttribute('allow_login', !0);
+      messengerDiv.setAttribute('size', 'large');
+      var textDiv = document.createElement('div');
+      textDiv.innerHTML = settings.text;
+      if (settings.text_placement === 'above') {
+          textDiv.setAttribute('style', 'display:block;padding: 10px 20px 0;');
+          messengerWrapper.appendChild(textDiv);
+          messengerWrapper.appendChild(messengerDiv);
+      } else {
+          textDiv.setAttribute('style', 'display:block;padding: 0 20px 10px;');
+          messengerWrapper.appendChild(messengerDiv);
+          messengerWrapper.appendChild(textDiv);
+      }
+      window.fbLoaded.promise.then(function(){
+        if (settings.placement === 'custom') {
+          var checkbox = document.getElementsByClassName('ba-checkbox');
+          if (checkbox.length > 0) {
+            checkbox = checkbox[0];
+            checkbox.appendChild(messengerWrapper);
+          }
+        } else {
+          form.parentNode.insertBefore(messengerWrapper, settings.placement === 'under_cart' ? form.nextSibling : form);
+          form.addEventListener('submit', confirmFbChkOptIn('regular', false));
+          applyMet('fb_chk_view');
+          FB.Event.subscribe('messenger_checkbox', function(e) {
+            if (e.event === 'checkbox' && e.state === 'checked'){
+              checkboxChecked = !0
+            }
+          })
+        }
+      });
+      window.onresize = function() {
+        buttonWidth = addToCartBtn !== null ? addToCartBtn.offsetWidth : 0;
+        messengerWrapper.style.width = (buttonWidth > 0 && (selects.length === 0 || selects[0].offsetParent === null)) ? buttonWidth + 'px' : 'auto';
+        self.alignWraper(messengerWrapper,settings.align)
+      }
+    }
+  };
+  
+
+  function confirmFbChkOptIn(chkType, optedIn) {
+    if (chkType == 'regular' && !checkboxChecked){
+      return;
+    } else if (chkType == 'discount' && (!optedIn || window.baMsg.subscriber_hash.ba_fbchk_opted_in)){
+      return;
+    }
+
+    baMet.getCartData(function(data){
+      var cartToken = JSON.parse(data).token;
+      if (!window.baMsg.subscriber_hash.ba_fbchk_opted_in){
+        var rightNow = parseInt(new Date().getTime());
+        var updateHash = {
+          ba_fbchk_opt_in_cart_token: cartToken,
+          ba_fbchk_opted_in: rightNow,
+          ba_fb_opted_in: rightNow
+        }
+        updateSubscriberHash(updateHash);
+        FB.AppEvents.logEvent('MessengerCheckboxUserConfirmation', null, {
+            'app_id': window.baMsg.app_id,
+            'page_id': window.baMsg.fb_page_id,
+            'user_ref': window.baMsg.user_ref,
+            'ref': cartToken + '|' + window.baMsg.visitor_token,
+        })
+        trackFbOptIn(data, 'checkbox');
+      }
+    });
+  }
+  return this;
+}
+
+
+
+function boosterFbModal() {
+  window.baLoaded = false;
+
+  this.generate = function (settings) {
+    if (window.baMsg.page_url.indexOf('/checkouts/') !== -1 && window.baMsg.page_url.indexOf('/thank_you') !== -1){
+      return;
+    }
+
+    if (window.baMsg.page_url.indexOf('ba-modal-preview') === -1) {
+      if (!settings.active){return;}
+      if (window.baMsg.subscriber_hash.ba_fb_modal_opted_in){return;}
+      if (window.baMsg.subscriber_hash.ba_fb_opted_in){return;}
+      if (window.baMsg.subscriber_hash.ba_fb_modal_closed){return;}
+      if (!canDisplayByDevice(settings.devices)){return;}
+      //TODO if (!canDisplayByRules(settings.rules)){return;}
+    }
+
+    var modalShade = document.createElement('div');
+    modalShade.classList = 'ba-modal-shade';
+    modalShade.setAttribute('style', 'position: fixed; z-index: 100000; background: rgba(0,0,0,.42); width:100%; height: 100%; opacity: 0;display:none;');
+    modalShade.style.overflow = 'none';
+    modalShade.style.transition = 'all 0.5s';
+
+    window.fbLoaded.promise.then(function(){
+      var s = document.body.firstChild;
+      s.parentNode.insertBefore(modalShade, s);
+    });
+
+    var modal = document.createElement('div');
+    modal.id = 'ba-send-to-messenger-modal';
+    modal.setAttribute('style', 'max-width: 430px; height: auto;z-index:2147483647; border-radius:5px;text-align:center;');
+    modal.style.position = 'relative';
+    modal.style.left = 0;
+    modal.style.right = 0;
+    modal.style.margin = '20px auto';
+    modal.style.marginTop = '10%';
+    modal.style.marginTop = '10vh';
+    modal.style.padding = '15px';
+    modal.style.overflow = 'hidden';
+    modal.style.backgroundColor = settings.background_color;
+
+    if (window.innerHeight < 600) {
+      modalShade.style.overflowY = 'scroll';
+      modalShade.style.zIndex = 2147483647;
+      modal.style.marginTop = '5%';
+      modal.style.marginTop = '5vh';
+    } else if (window.innerHeight < 700) {
+      modalShade.style.overflowY = 'scroll';
+      modalShade.style.zIndex = 2147483647;
+      modal.style.marginTop = '10%';
+      modal.style.marginTop = '10vh';
+    }
+
+    var exitIcon = document.createElement('span');
+    exitIcon.classList = 'ba-modal-close';
+    exitIcon.setAttribute('style', 'position: absolute;right: 10px;top: 5px;cursor: pointer;color: #000;opacity:0.3;font-size:30px;');
+    exitIcon.innerHTML = '&times;';
+
+    modal.appendChild(exitIcon);
+
+    var title = document.createElement('div');
+    title.setAttribute('id', 'ba-fb-modal-title');
+    title.setAttribute('style', 'text-align: center; padding: 20px 20px 15px;font-size: 20px; line-height:24px;');
+    title.style.color = settings.title_color;
+    title.innerHTML = settings.title;
+
+    modal.appendChild(title);
+
+    var description = document.createElement('div');
+    description.setAttribute('style', 'text-align: center;font-size:17px;padding:10px 20px 35px;');
+    description.style.color = settings.subtitle_color;
+    description.innerHTML = settings.subtitle;
+    description.setAttribute('id', 'ba-fb-modal-desc');
+    modal.appendChild(description);
+    var image = document.createElement('img');
+    if (settings.image_name !== null) {
+      image.style.width = '100%';
+      image.src = settings.image_name;
+      if (settings.image_placement === 'above_title') {
+        modal.style.paddingTop = '40px';
+        modal.insertBefore(image, modal.childNodes[0]);
+      } else if (settings.image_placement === 'under_title') {
+        modal.insertBefore(image, title.nextSibling);
+      } else {
+        modal.appendChild(image);
+      }
+    }
+    var width = 125;
+
+    if (settings.send_size === 'standard'){
+      width = 125;
+    } else if (settings.send_size === 'large'){
+      width = 155;
+    } else if (settings.send_size === 'xlarge'){
+      width = 180;
+    }
+
+    var optInBoxWrapper = document.createElement('div');
+    optInBoxWrapper.setAttribute('style', 'margin: 20px auto 30px;');
+    optInBoxWrapper.style.width = width + 'px';
+    modal.appendChild(optInBoxWrapper);
+
+    var dataRef = 'OPT_IN_FROM_SEND_TO_MESSENGER:modal:';
+    if (window.baMsg.visitor_token !== ''){
+      dataRef += window.baMsg.visitor_token;
+    }
+    var optInBox = document.createElement('div');
+    optInBox.classList = 'fb-send-to-messenger';
+    optInBox.setAttribute('messenger_app_id', window.baMsg.app_id);
+    optInBox.setAttribute('page_id', window.baMsg.fb_page_id);
+    optInBox.setAttribute('data-ref', dataRef);
+    optInBox.setAttribute('color', settings.send_color);
+    optInBox.setAttribute('size', settings.send_size);
+    modal.appendChild(optInBox);
+    optInBoxWrapper.appendChild(optInBox);
+    var buttonWrapper = document.createElement('div');
+    buttonWrapper.setAttribute('style', 'margin: 0 auto;padding-bottom: 20px;display:none;');
+    modal.appendChild(buttonWrapper);
+    var button = document.createElement('a');
+    button.setAttribute('target', '_blank');
+    button.href = 'https://m.me/' + window.baMsg.fb_page_id;
+    button.innerHTML = settings.button_text;
+    button.setAttribute('style', 'text-align:center;padding: 10px 20px; border-radius: 5px; margin-bottom: 15px;margin-top:10px;text-decoration: none;');
+    button.style.backgroundColor = settings.button_color;
+    button.style.color = settings.button_text_color;
+    button.style.border = '1px solid ' + settings.border_color;
+    button.onmouseover = function () {button.style.opacity = 0.8;};
+    button.onmouseout = function () {button.style.opacity = 1;};
+    button.onclick = function () {closeModal(false);};
+    buttonWrapper.appendChild(button);
+    modalShade.appendChild(modal);
+
+    switch (settings.display) {
+      case 'immediately':
+        showModal();
+        break;
+      case 'exit_intent':
+        document.addEventListener("mouseleave", function (e) {
+          if (e.clientY < 0) {
+            showModal();
+          }
+        }, false);
+        break;
+      case 'seconds_passed':
+        setTimeout(function () {
+          showModal();
+        }, settings.delay * 1000);
+        break;
+    }
+
+    exitIcon.onclick = function () {
+      closeModal(true);
+    };
+
+    function showModal(){
+      modalShade.style.display = 'block';
+      modalShade.style.opacity = 1;
+      window.baMsg.use_stm_callback = 'modal';
+      applyMet('fb_modal_view');
+    }
+
+    function closeModal(markAsClosed) {
+      modalShade.style.opacity = '0';
+      window.baMsg.use_stm_callback = '';
+      if (markAsClosed){
+        updateSubscriberHash({ba_fb_modal_closed: parseInt(new Date().getTime())});
+        applyMet('ba_fb_modal_close')
+      }
+      setTimeout(function () {
+        document.body.removeChild(modalShade);
+      }, 500);
+    }
+  };
+
+  return this;
+}
+
+function boosterFbAtcModal() {
+  window.baLoaded = false;
+  try{
+    var css = document.createElement('style');
+    css.type = 'text/css';
+    var styles = '@import url("https://fonts.googleapis.com/css?family=Roboto");';
+    css.appendChild(document.createTextNode(styles));
+    document.getElementsByTagName("head")[0].appendChild(css);
+  } catch (err){
+    console.log(err)
+  }
+
+  this.generate = function (settings) {
+    window.baMsg.showFbAtcModal = function(event){
+      if (window.baMsg.active_fb_atc_shown == false && window.baMsg.settings.fb_atc_popup.active){
+        if (window.baMsg.subscriber_hash.ba_fb_opted_in){return;}
+        if (window.baMsg.subscriber_hash.ba_fb_atc_popup_closed){return;}
+        event.preventDefault();
+        window.baMsg.active_atc.classList.remove("ba-click-ready");
+        //var atcModal = document.getElementById("ba-fb-atc-popup");
+        createModal.classList.add("show-pop");
+        createModal.style.display = "block";
+        window.baMsg.active_atc.removeEventListener('click', function(){});
+        window.baMsg.use_stm_callback = 'fb_atc_popup';
+        applyMet('fb_atc_view');
+        window.baMsg.active_fb_atc_shown = true;
+        return false;
+      }
+    }
+
+    window.baMsg.closeFbAtcModal = function(markAsClosed){
+      createModal.classList.remove("show-pop");
+      createModal.style.display = "none";
+      window.baMsg.use_stm_callback = '';
+      window.baMsg.active_atc.removeEventListener('click',function(){});
+      if (markAsClosed){
+        updateSubscriberHash({ba_fb_atc_popup_closed: parseInt(new Date().getTime())});
+        applyMet('fb_atc_close');
+      }
+      setTimeout(function (){
+        window.baMsg.active_atc.click();
+      }, 500);
+    }
+
+    if (!window.baMsg.is_preview){
+      if (!settings.active){return;}
+      if (window.baMsg.subscriber_hash.ba_fb_atc_popup_opted_in){return;}
+      if (window.baMsg.subscriber_hash.ba_fb_opted_in){return;}
+      if (window.baMsg.subscriber_hash.ba_fb_atc_popup_closed){return;}
+    }
+
+    if (window.baMsg.page_url.indexOf('products') !== -1) {
+      if (!settings.active && !window.baMsg.is_preview){
+        return;
+      }
+      var form = getProductForm();
+      if (!form || form.length === 0 || (window.baMsg.subscriber_hash.ba_fb_atc_popup_opted_in && !window.baMsg.is_preview)){
+        return;
+      }
+    }
+
+    var modalShade = document.createElement('div');
+    modalShade.classList = 'ba-modal-shade';
+    modalShade.setAttribute('style', 'position: fixed; z-index: 100000; background: rgba(0,0,0,.42); width:100%; height: 100%; opacity: 0;display:none;');
+    modalShade.style.overflow = 'none';
+    modalShade.style.transition = 'all 0.5s';
+
+    window.fbLoaded.promise.then(function(){
+      var s = document.body.firstChild;
+      s.parentNode.insertBefore(modalShade, s);
+    });
+
+    var createModal = document.createElement('div');
+    createModal.setAttribute('id', 'ba-fb-atc-popup');
+    var appendModal = document.body.appendChild(createModal);
+    var modalClass = appendModal.classList.add("ba-fb-add-tc-popup__overlay");
+    createModal.setAttribute('style','position: fixed;top: 0;left: 0;width: 100%;height: 100%;z-index: 2147483647;display: none;');
+
+    var modalWrapper = document.createElement('div');
+    var modalWrapperMain = createModal.appendChild(modalWrapper);
+    modalWrapperMain.classList.add('ba-fb-add-tc-popup__wrapper');
+    modalWrapper.setAttribute('style','display: block;position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);width: 720px;max-width: 93%;');
+
+    var modalContainer = document.createElement('div');
+    modalWrapperMain.appendChild(modalContainer);
+    modalContainer.classList.add('ba-fb-add-tc-popup__container');
+    modalContainer.setAttribute('style','background: #FFFFFF;border: 1px solid #DADADA;border-radius: 7px;box-shadow: 0 0 40px 0 rgba(0, 0, 0, 0.1);position: relative;');
+
+    if(settings.close_button == "1"){
+      var closeButton = document.createElement('button');
+      modalContainer.appendChild(closeButton);
+      closeButton.classList.add('ba-fb-add-tc-popup__close','ba-fb-tc-modal-close');
+      closeButton.innerHTML = "✖";
+      closeButton.setAttribute('style','width: 30px;height: 30px;line-height: 30px;position: absolute;top: 15px;right: 15px;border: none;background: none;z-index: 10;');
+    }
+
+    var modalHeader = document.createElement('div');
+    modalContainer.appendChild(modalHeader);
+    modalHeader.classList.add('ba-fb-add-tc-pop-head');
+
+    var modalHeaderImage = document.createElement('div');
+    modalHeader.setAttribute('style','background: #F2F5F9;border-bottom: 1px solid #DADADA;border-radius: 7px 7px 0 0;height: 130px;position: relative;');
+    modalHeader.appendChild(modalHeaderImage);
+    modalHeaderImage.setAttribute('style','position: absolute;bottom: 0px;width: 100%;height: 200%;background-image: url("https://cdn.shopify.com/s/files/1/2701/3534/t/1/assets/phone-hand.svg?10344228977754903280");background-size: 260px;background-position: center bottom;background-repeat: no-repeat;');
+    modalHeaderImage.classList.add('ba-fb-add-tc-popup-head-img');
+
+    var modalBody = document.createElement('div');
+    modalContainer.appendChild(modalBody);
+    modalBody.classList.add('ba-fb-add-tc-popup__body');
+    modalBody.setAttribute('style','padding: 30px;text-align: center;background: #ffffff;');
+
+    var modalHeaderTag = document.createElement('h3');
+    modalBody.appendChild(modalHeaderTag);
+    modalHeaderTag.classList.add('ba-fb-add-tc-pop-title');
+    modalHeaderTag.setAttribute('style','margin: 10px 0 25px;font-family: "Roboto", sans-serif;font-size: 25px;text-align: center;');
+    modalHeaderTag.innerHTML = settings.title;
+    modalHeaderTag.style.color = settings.header_text_color;
+
+    var modalParaTag = document.createElement('p');
+    modalParaTag.innerHTML = settings.paragraph;
+    modalBody.appendChild(modalParaTag);
+    modalParaTag.classList.add('ba-fb-add-tc-pop-desc');
+    modalParaTag.setAttribute('style','margin: 0 0 20px;font-family: "Roboto", sans-serif;font-size: 17px;text-align: center;line-height: 25px;');
+    modalParaTag.style.color = settings.paragraph_text_color;
+
+    var optInBoxWrapper = document.createElement('div');
+    optInBoxWrapper.setAttribute('style', 'margin: 10px auto 30px;');
+    modalBody.appendChild(optInBoxWrapper);
+
+    var dataRef = 'OPT_IN_FROM_SEND_TO_MESSENGER:atc_popup';
+    if (window.baMsg.visitor_token !== ''){
+      dataRef += ':' + window.baMsg.visitor_token;
+    }
+
+    var optInBox = document.createElement('div');
+    optInBox.classList = 'fb-send-to-messenger';
+    optInBox.setAttribute('messenger_app_id', window.baMsg.app_id);
+    optInBox.setAttribute('page_id', window.baMsg.fb_page_id);
+    optInBox.setAttribute('data-ref', dataRef);
+    optInBox.setAttribute('color', settings.button_cta_color);
+    optInBox.setAttribute('size', 'xlarge');
+    optInBox.setAttribute('cta_text', settings.button_cta);
+    optInBox.setAttribute('style', 'width:176px !important;margin-top:15px;');
+    modalBody.appendChild(optInBox);
+    optInBoxWrapper.appendChild(optInBox);
+
+    var modalFooter = document.createElement('small');
+    modalFooter.innerHTML = settings.no_thanks_text;
+    modalBody.appendChild(modalFooter);
+    modalFooter.classList.add('ba-fb-add-tc-pop-footer','ba-fb-tc-modal-close');
+    modalFooter.setAttribute('style','display: block;margin: 5px auto 0;font-family: "Roboto", sans-serif;font-size: 12px;text-align: center;cursor: pointer;');
+    modalFooter.style.color = settings.no_thanks_text_color;
+
+    var closePopup = document.querySelector(".ba-fb-tc-modal-close");
+    closePopup.addEventListener("click", function(e) {
+      e.preventDefault();
+      window.baMsg.closeFbAtcModal(true);
+    });
+    modalFooter.addEventListener("click", function(e) {
+      e.preventDefault();
+      window.baMsg.closeFbAtcModal(true);
+    });
+
+    return this;
+
+  };
+
+  function getProductForm() {
+    var form = document.getElementById('add-item-form');
+    if (!form || form.length === 0){
+        form = document.querySelector("form[action='/cart/add']");
+    }
+    if (!form || form.length === 0){
+        form = document.querySelector("form[action^='/cart/add']");
+    }
+    if (!form || form.length === 0){
+        form = document.querySelector("form[action$='/cart/add']");
+    }
+    if (!form || form.length === 0){
+        form = document.querySelector("form[action='/cart/add.js']");
+    }
+    if (!form || form.length === 0){
+        form = document.querySelector("form[action='/cart/add?return=/']");
+    }
+    if (!form || form.length === 0){
+        form = document.getElementsByClassName("form.product-form")[0];
+    }
+    if (!form || form.length === 0){
+        form = document.getElementsByClassName("btn-addtocart")[0];
+    }
+    return form
+  }
+
+  setTimeout(function () {
+    FB.Event.subscribe('send_to_messenger', function (e) {
+      if (window.baMsg.use_stm_callback == 'modal'){
+        if (e.event === 'clicked') {
+          applyMet('ba_fb_modal_click');
+          var fbModalTitle = document.getElementById('ba-fb-modal-title');
+          var fbModalDesc = document.getElementById('ba-fb-modal-desc');
+
+          if (window.baMsg.settings.fb_modal.discount_code === null) {
+            fbModalTitle.innerHTML = window.baMsg.settings.fb_modal.submitted_title;
+            fbModalDesc.innerHTML = window.baMsg.settings.fb_modal.submitted_subtitle;
+          } else {
+            fbModalTitle.innerHTML = window.baMsg.settings.fb_modal.submitted_title.replace('%discountCode', '<b>' + window.baMsg.settings.fb_modal.discount_code + '</b>');
+            fbModalDesc.innerHTML = window.baMsg.settings.fb_modal.submitted_subtitle === null ? null : window.baMsg.settings.fb_modal.submitted_subtitle.replace('%discountCode', '<b>' + window.baMsg.settings.fb_modal.discount_code + '</b>');
+          }
+
+          if (window.baMsg.settings.fb_modal.image_name !== null){
+            //image.parentNode.removeChild(image);
+          }
+        }
+
+        if (e.event === 'opt_in') {
+          if (window.baMsg.subscriber_hash.ba_fb_modal_opted_in){return;}
+
+          baMet.getCartData(function(data){
+            var cartToken = JSON.parse(data).token;
+
+            if (!window.baMsg.subscriber_hash.ba_fb_modal_opted_in){
+              var rightNow = parseInt(new Date().getTime());
+              var updateHash = {
+                ba_fb_modal_opted_in: rightNow,
+                ba_fb_opted_in: rightNow,
+                ba_fb_modal_opt_in_cart_token: cartToken
+              }
+              updateSubscriberHash(updateHash);
+              trackFbOptIn(data, 'ba_fb_modal');
+            }
+          });
+        }
+
+      } else if (window.baMsg.use_stm_callback == 'fb_atc_popup'){
+        // if (e.event === 'clicked') {
+        //   trackClick();
+        // }
+
+        if (e.event === 'opt_in') {
+          if (window.baMsg.subscriber_hash.ba_fb_atc_popup_opted_in === 'true'){return;}
+
+          baMet.getCartData(function(data){
+            var cartToken = JSON.parse(data).token;
+
+            if (!window.baMsg.subscriber_hash.ba_fb_atc_popup_opted_in){
+              var rightNow = parseInt(new Date().getTime());
+              var updateHash = {
+                ba_fb_atc_popup_opted_in: rightNow,
+                ba_fb_opted_in: rightNow,
+                ba_fb_atc_popup_opt_in_cart_token: cartToken
+              }
+              updateSubscriberHash(updateHash);
+              trackFbOptIn(data, 'atc_popup');
+            }
+          });
+          window.baMsg.closeFbAtcModal(false);
+        }
+      }
+    });
+  }, 1000);
+
+
+  return this;
+}
+  
+  
+
+  (function() {
+
+      if (window.baMsg.fb_active && window.baMsg.fb_page_id){
+        //fb
+        var loader = new boosterFBLoader();
+        loader.load();
+        loader.loadChat({
+          "active":1,
+          "minimized":1,
+          "theme_color":'#29b6f6',
+          "logged_in_greeting":"Hi there! How can we help you?",
+          "logged_out_greeting":"Hi! We\'re here to answer any questions you may have."
+        });
+        new boosterFbCheckboxes().generate(window.baMsg.settings.fb_base);
+        new boosterFbModal().generate(window.baMsg.settings.fb_modal);
+        new boosterFbAtcModal().generate(window.baMsg.settings.fb_atc_popup);
+      }
+      //push
+      if (window.baMsg.push_active){
+        new boosterPushSession().generate({
+          "active": false
+        });
+      }
+
+      if (window.baMsg.sms_active){
+        new boosterSMSAtcModal().generate({
+           "active":0,
+           "title":"",
+           "paragraph":"",
+           "no_thanks_text":"",
+           "close_button":"",
+           "plugin_type":"send_to_messenger",
+           "button_cta":"",
+           "button_cta_color":"",
+           "header_bg_color":"",
+           "body_bg_color":"",
+           "header_text_color":"",
+           "paragraph_text_color":"",
+           "no_thanks_text_color":"",
+           "disclaimer":""
+        });
+      }
+
+    })();
+
+  listentoAtc();
+
+  });
+}())
+</script>

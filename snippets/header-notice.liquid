@@ -1,0 +1,28 @@
+{%- if settings.hn_use -%}
+<div class="standard-body{%- if settings.hn_desktop == false -%}{{' '}}hidden-lg hidden-md{%- endif -%}{%- if settings.hn_mobile == false -%}{{' '}}hidden-sm hidden-xs{%- endif -%}" id="header-notice">
+  <div class="header-notice full-width clearfix">
+    <a href="#" class="close-notice"></a>
+    <div class="container">
+      <p>{{settings.hn_text}}</p>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  $(document).ready(function(){
+    {%- if settings.hn_once -%}
+    if (localStorage.getItem('displayNotice') != 'yes') {
+      {%- endif -%}
+      $("#header-notice .header-notice").show();
+      $('#header-notice .close-notice').on('click', function () {
+        {%- if settings.hn_once -%}
+        localStorage.setItem('displayNotice', 'yes');
+        {%- endif -%}
+        $("#header-notice .header-notice").hide();
+        return false;
+      });
+      {%- if settings.hn_once -%}
+    } 
+    {%- endif -%}
+  });
+</script>
+{%- endif -%}

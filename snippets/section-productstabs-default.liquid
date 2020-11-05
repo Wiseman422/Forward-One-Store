@@ -1,0 +1,382 @@
+{%- if section.blocks.size > 0 -%}
+{%- if section.blocks.size > 1 -%}
+<div data-placement_fullwidth="{%- if section.settings.placement_fullwidth -%}1{%- else -%}0{%- endif -%}"
+     data-_tabskin ="{{section.settings.ptab_skin}}"
+     data-_tabcount="{{section.blocks.size}}"
+     id ="product-tab-{{section.id}}" class="product-tab-wrapper filter-product{%- if section.settings.visible_on_mobile == false -%}{{" hidden-xs"}}{%- endif-%}" data-section-id="{{ section.id }}" data-section-type="product-tab">
+  <div class="filter-tabs">
+    <div class="bg-filter-tabs"><div class="bg-filter-tabs2 clearfix">
+      <ul id="tab{{section.id}}" class="tab-filter-tabs-{{section.id}}">
+        {%- for block in section.blocks limit: section.blocks.size -%}
+        {%- assign collection = collections[block.settings.collection] -%}
+        {%- if collection.empty? -%}
+        {%- assign ptab_id = 'collection-' | append: block.id -%}
+        {%- assign ptab_title = "Collection Title" -%}
+        {%- else -%}
+        {%- assign ptab_id = collection.title|handle | append: block.id -%}
+        {%- assign ptab_title = collection.title -%}
+        {%- endif -%}
+        <li{%- if forloop.index0 == 0 -%}{{' '}}class="active"{%- endif -%} {{ block.shopify_attributes }}>
+          <a href="#{{ptab_id}}">
+            {%- if block.settings.ptab_heading != blank-%}  
+            {{block.settings.ptab_heading}}
+            {%- else -%}
+            {{ptab_title}}
+            {%- endif -%}
+          </a>
+        </li>
+        {%- endfor -%}
+      </ul>
+      </div>
+    </div>
+  </div>
+  <div class="tab-content clearfix">
+    {%- for block in section.blocks limit: section.blocks.size -%}
+    {%- assign _id  = 'ptab' | append: block.id -%}
+    {%- assign _ptab_carousel 		= block.settings.ptab_carousel -%}
+    {%- assign _ptab_maxitem		    = block.settings.ptab_max| plus: 0 -%}
+    {%- assign _ptab_rows				= block.settings.ptab_rows | plus: 0 -%}
+    {%- assign _ptab_items_per_row	= block.settings.ptab_items_per_row | plus: 0 -%}
+
+    {%- assign _ptab_width			= block.settings.ptab_img_width -%}
+    {%- assign _ptab_height			= block.settings.ptab_img_height -%}
+
+    {%- if _ptab_width == blank -%}
+    {%- assign _ptab_width = '240' -%}
+    {%- endif -%}
+    {%- if _ptab_height == blank -%}
+    {%- assign _ptab_height = '240' -%}
+    {%- endif -%}
+    {%- assign _ptab_url_imgdim = _ptab_width | append: 'x' | append: _ptab_height -%}
+
+    {%- assign _tabcount = section.blocks.size -%}
+    {%- assign _all = _ptab_rows | times: _ptab_items_per_row -%}
+    {%- if _ptab_maxitem == 0 -%}
+    {%- assign _ptab_maxitem = _all %}
+    {%- endif -%}
+
+    {%- assign _class = 3 -%}
+
+    {%- if _ptab_items_per_row == 1 -%}
+    {%- assign _class = 12 -%}
+    {%- endif -%}
+    {%- if _ptab_items_per_row == 2 -%}
+    {%- assign _class = 6 -%}
+    {%- endif -%}
+    {%- if _ptab_items_per_row == 3 -%}
+    {%- assign _class = 4 -%}
+    {%- endif -%}
+    {%- if _ptab_items_per_row == 4 -%}
+    {%- assign _class = 3 -%}
+    {%- endif -%}
+    {%- if _ptab_items_per_row == 5 -%}
+    {%- assign _class = 25 -%}
+    {%- endif -%}
+    {%- if _ptab_items_per_row == 6 -%}
+    {%- assign _class = 2 -%}
+    {%- endif -%}
+
+    {%- assign collection = collections[block.settings.collection] -%}
+    {%- assign ptab_id = collection.title|handle | append: block.id -%}
+    {%- if collection.empty? -%}
+    {%- assign ptab_id = 'collection-' | append: block.id -%}
+    {%- assign ptab_title = "Collection Title" -%}
+    {%- else -%}
+    {%- assign ptab_id = collection.title|handle | append: block.id -%}
+    {%- assign ptab_title = collection.title -%}
+    {%- endif -%}
+    <div 
+         data-_id ="{{_id}}"
+         data-_ptab_carousel="{{_ptab_carousel}}"
+         data-_cols="{{_ptab_items_per_row}}"
+         class="product-tab-item-{{section.id}} tab-pane{%- if forloop.index0 == 0 -%}{{' '}}active{%- endif -%}" id="{{ptab_id}}" {{ block.shopify_attributes }}>
+      {%- if _ptab_carousel -%}
+      <!-- Carousel nav -->
+      <a class="next-button" href="#myCarousel{{_id}}" id="myCarousel{{_id}}_next"><span></span></a>
+      <a class="prev-button" href="#myCarousel{{_id}}" id="myCarousel{{_id}}_prev"><span></span></a>
+      {%- endif -%}
+
+      <div class="box-product">
+        <div id="myCarousel{{_id}}"{{' '}}class="{{' '}}{%- if _ptab_carousel -%}carousel slide{%- endif -%}">
+          <!-- Carousel items -->
+          <div class="carousel-inner">
+
+            {%- if collection.empty? -%}
+
+            {%- if _ptab_carousel -%}
+            {%- assign _c = _ptab_maxitem | divided_by: _ptab_rows -%}
+            {%- for _t in (0.._c) -%}
+            {%- assign _f = _t | times: _ptab_rows -%}
+            <div class="item">
+              <div class="product-grid">
+                {%- for i in (1.._ptab_maxitem) offset:_f limit:_ptab_rows -%}{{' '}}
+                <div class="row">
+                  <div class="col-xs-12">
+                  {%- include 'product-item-onboarding' with _ptab_url_imgdim -%}
+                  </div>
+                </div>
+                {%- endfor -%}
+              </div>
+            </div>
+            {%- endfor -%}
+            {%- else -%}
+            <div class="active item">
+              <div class="product-grid">
+                <div class="row">
+                  {%- for i in (1.._ptab_maxitem) -%}
+                  <div class="col-sm-{{_class}} col-xs-6
+                              {%- if _class == 2 -%}{{' '}}col-md-25 col-lg-2 col-sm-3{%- endif -%}
+                              {%- if _class == 25 -%}{{' '}}col-md-25 col-lg-25 col-sm-3{%- endif -%}">
+                    {%- include 'product-item-onboarding' with _ptab_url_imgdim -%}
+                  </div>
+                  {%- endfor -%}
+                </div>
+              </div>
+            </div>
+            {%- endif -%}
+
+            {%- else %}
+
+            {%- if _ptab_carousel -%}
+
+            {%- assign _all_products_count = collection.all_products_count -%}
+            {%- if _ptab_maxitem < _all_products_count -%}
+            {%- assign _all_products_count = _ptab_maxitem -%}
+            {%- endif -%}
+
+            {%- assign _flag = 0 -%}
+
+            {%- assign _c = _all_products_count| divided_by: _ptab_rows -%}
+            {%- assign _r = _all_products_count| modulo: _ptab_rows -%}
+            {%- if _r == 0 -%}{%- assign _c = _c | minus: 1 -%}{%- endif -%}
+            
+            {%- for _t in (0.._c) -%}
+            {%- assign _f = _t | times: _ptab_rows -%}
+            
+            <div class="item">
+              <div class="product-grid">
+                {%- for product in collection.products offset:_f limit:_ptab_rows -%}{{' '}}
+                {%- assign _flag = _flag | plus: 1 -%}
+                {%- if _flag > _ptab_maxitem -%}
+                {%- break -%}
+                {%- endif -%}
+                <div class="row">
+                  <div class="col-xs-12">
+                  {%- include 'product-item' with _ptab_url_imgdim -%}
+                  </div>
+                </div>
+                {%- endfor -%}
+              </div>
+            </div>
+            {%- endfor -%}
+            {%- else -%}
+            <div class="active item">
+              <div class="product-grid">
+                <div class="row">
+                  {%- for product in collection.products -%}
+                  {%- if forloop.index > _ptab_maxitem -%}
+                  {%- break -%}
+                  {%- endif -%}
+                  <div class="col-sm-{{_class}} col-xs-6
+                              {%- if _class == 2 -%}{{' '}}col-md-25 col-lg-2 col-sm-3{%- endif -%}
+                              {%- if _class == 25 -%}{{' '}}col-md-25 col-lg-25 col-sm-3{%- endif -%}">
+                    {%- include 'product-item' with _ptab_url_imgdim -%}
+                  </div>
+                  {%- endfor -%}
+                </div>
+              </div>
+            </div>
+            {%- endif -%}
+
+            {%- endif -%}
+
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+    {%- endfor -%}
+  </div>
+</div>
+{%- else -%}
+<div data-placement_fullwidth="{%- if section.settings.placement_fullwidth -%}1{%- else -%}0{%- endif -%}"
+     data-_tabcount="{{section.blocks.size}}"
+     id ="product-tab-{{section.id}}" class="product-tab-wrapper{%- if section.settings.visible_on_mobile == false -%}{{" hidden-xs"}}{%- endif-%}" data-section-id="{{ section.id }}" data-section-type="product-tab">
+  {%- for block in section.blocks limit: section.blocks.size -%} 
+  {%- assign _id  = 'ptab' | append: block.id -%}
+  {%- assign _ptab_carousel 		= block.settings.ptab_carousel -%}
+  {%- assign _ptab_maxitem		    = block.settings.ptab_max| plus: 0 -%}
+  {%- assign _ptab_rows				= block.settings.ptab_rows | plus: 0 -%}
+  {%- assign _ptab_items_per_row	= block.settings.ptab_items_per_row | plus: 0 -%}
+
+  {%- assign _ptab_width			= block.settings.ptab_img_width -%}
+  {%- assign _ptab_height			= block.settings.ptab_img_height -%}
+
+  {%- if _ptab_width == blank -%}
+  {%- assign _ptab_width = '240' -%}
+  {%- endif -%}
+  {%- if _ptab_height == blank -%}
+  {%- assign _ptab_height = '240' -%}
+  {%- endif -%}
+  {%- assign _ptab_url_imgdim = _ptab_width | append: 'x' | append: _ptab_height -%}
+
+  {%- assign _tabcount = section.blocks.size -%}
+  {%- assign _all = _ptab_rows | times: _ptab_items_per_row -%}
+  {%- if _ptab_maxitem == 0 -%}
+  {%- assign _ptab_maxitem = _all %}
+  {%- endif -%}
+
+  {%- assign _class = 3 -%}
+
+  {%- if _ptab_items_per_row == 1 -%}
+  {%- assign _class = 12 -%}
+  {%- endif -%}
+  {%- if _ptab_items_per_row == 2 -%}
+  {%- assign _class = 6 -%}
+  {%- endif -%}
+  {%- if _ptab_items_per_row == 3 -%}
+  {%- assign _class = 4 -%}
+  {%- endif -%}
+  {%- if _ptab_items_per_row == 4 -%}
+  {%- assign _class = 3 -%}
+  {%- endif -%}
+  {%- if _ptab_items_per_row == 5 -%}
+  {%- assign _class = 25 -%}
+  {%- endif -%}
+  {%- if _ptab_items_per_row == 6 -%}
+  {%- assign _class = 2 -%}
+  {%- endif -%}
+
+  {%- assign collection = collections[block.settings.collection] -%}
+  {%- if collection.empty? -%}
+  {%- assign ptab_title = "Collection Title" -%}
+  {%- else -%}
+  {%- assign ptab_title = collection.title -%}
+  {%- endif -%}
+  <div 
+       data-_id ="{{_id}}"
+       data-_ptab_carousel="{{_ptab_carousel}}"
+       data-_cols="{{_ptab_items_per_row}}"
+       class="product-tab-item-{{section.id}} box clearfix box-with-products{%- if _ptab_carousel -%}{{' '}}with-scroll{%- endif -%}{{' '}}box-no-advanced" {{ block.shopify_attributes }}>
+    {%- if _ptab_carousel -%}
+    <!-- Carousel nav -->
+    <a class="next" href="#myCarousel{{_id}}" id="myCarousel{{_id}}_next"><span></span></a>
+    <a class="prev" href="#myCarousel{{_id}}" id="myCarousel{{_id}}_prev"><span></span></a>
+    {%- endif -%}
+
+    <div class="box-heading">
+      {%- if block.settings.ptab_heading != blank-%}  
+      {{block.settings.ptab_heading}}
+      {%- else -%}
+      {{ptab_title}}
+      {%- endif -%}
+    </div>
+    <div class="strip-line"></div>
+    <div class="clear"></div>
+    
+    <div class="box-content products">
+      <div class="box-product">
+        <div id="myCarousel{{_id}}"{{' '}}class="{{' '}}{%- if _ptab_carousel -%}carousel slide{%- endif -%}">
+          <!-- Carousel items -->
+          <div class="carousel-inner">
+
+            {%- if collection.empty? -%}
+
+            {%- if _ptab_carousel -%}
+            {%- assign _c = _ptab_maxitem | divided_by: _ptab_rows -%}
+            {%- for _t in (0.._c) -%}
+            {%- assign _f = _t | times: _ptab_rows -%}
+            <div class="item">
+              <div class="product-grid">
+                {%- for i in (1.._ptab_maxitem) offset:_f limit:_ptab_rows -%}{{' '}}
+                <div class="row">
+                  <div class="col-xs-12">
+                  {%- include 'product-item-onboarding' with _ptab_url_imgdim -%}
+                  </div>
+                </div>
+                {%- endfor -%}
+              </div>
+            </div>
+            {%- endfor -%}
+            {%- else -%}
+            <div class="active item">
+              <div class="product-grid">
+                <div class="row">
+                  {%- for i in (1.._ptab_maxitem) -%}
+                  <div class="col-sm-{{_class}} col-xs-6
+                              {%- if _class == 2 -%}{{' '}}col-md-25 col-lg-2 col-sm-3{%- endif -%}
+                              {%- if _class == 25 -%}{{' '}}col-md-25 col-lg-25 col-sm-3{%- endif -%}">
+                    {%- include 'product-item-onboarding' with _ptab_url_imgdim -%}
+                  </div>
+                  {%- endfor -%}
+                </div>
+              </div>
+            </div>
+            {%- endif -%}
+
+            {%- else %}
+
+            {%- if _ptab_carousel -%}
+            
+            {%- assign _all_products_count = collection.all_products_count -%}
+            {%- if _ptab_maxitem < _all_products_count -%}
+            {%- assign _all_products_count = _ptab_maxitem -%}
+            {%- endif -%}
+            
+            {%- assign _flag = 0 -%}
+            
+            {%- assign _c = _all_products_count| divided_by: _ptab_rows -%}
+            {%- assign _r = _all_products_count| modulo: _ptab_rows -%}
+            {%- assign _b = 0 -%}
+            {%- if _r == 0 -%}{%- assign _c = _c | minus: 1 -%}{%- endif -%}
+            
+            {%- for _t in (0.._c) -%}
+            {%- assign _f = _t | times: _ptab_rows -%}
+            
+            <div class="item">
+              <div class="product-grid">
+                {%- for product in collection.products offset:_f limit:_ptab_rows -%}{{' '}}
+                {%- assign _flag = _flag | plus: 1 -%}
+                {%- if _flag > _ptab_maxitem -%}
+                {%- break -%}
+                {%- endif -%}
+                <div class="row">
+                  <div class="col-xs-12">
+                  {%- include 'product-item' with _ptab_url_imgdim -%}
+                  </div>
+                </div>
+                {%- endfor -%}
+              </div>
+            </div>
+            {%- endfor -%}
+            {%- else -%}
+            <div class="active item">
+              <div class="product-grid">
+                <div class="row">
+                  {%- for product in collection.products -%}
+                  {%- if forloop.index > _ptab_maxitem -%}
+                  {%- break -%}
+                  {%- endif -%}
+                  <div class="col-sm-{{_class}} col-xs-6
+                              {%- if _class == 2 -%}{{' '}}col-md-25 col-lg-2 col-sm-3{%- endif -%}
+                              {%- if _class == 25 -%}{{' '}}col-md-25 col-lg-25 col-sm-3{%- endif -%}">
+                    {%- include 'product-item' with _ptab_url_imgdim -%}
+                  </div>
+                  {%- endfor -%}
+                </div>
+              </div>
+            </div>
+            {%- endif -%}
+
+            {%- endif -%}
+          </div>
+        </div> 
+      </div>
+    </div>
+    
+  </div>
+  {%- endfor -%}
+</div>
+{%- endif -%}
+{%- endif -%}

@@ -1,0 +1,105 @@
+<div data-placement_fullwidth="{%- if section.settings.placement_fullwidth -%}1{%- else -%}0{%- endif -%}"
+     id="latest_blog-{{section.id}}" class="latest_blog_content{%- if section.settings.visible_on_mobile == false -%}{{" hidden-xs"}}{%- endif-%}" data-section-id="{{ section.id }}" data-section-type="latest-blog">
+	{%- assign _lblog_mobile		= section.settings.visible_on_mobile -%}
+    {%- assign _lblog_heading	= section.settings.lblog_head -%}
+    {%- assign _lblog_blog 		= blogs[section.settings.lblog_blog] -%}
+    {%- assign _lblog_limit		= section.settings.lblog_limit | plus: 0 -%}
+    {%- assign _lblog_order		= 1 -%}
+  	{%- assign _lblog_skin		= section.settings.lblog_skin -%}
+  	{%- assign _skin_snippet = 'latest-blog-' | append: _lblog_skin -%}
+	{%- include _skin_snippet -%}
+</div>
+{% schema %}
+  {
+    "name": "Latest Blogs",
+	"class": "index-section section-wrapper",
+    "settings": [
+		{
+          "type": "header",
+          "content": "Layout"
+        },
+  		{
+          "type": "checkbox",
+          "id": "placement_fullwidth",
+          "label": "Force Full Width"
+        },
+		{
+          "type": "checkbox",
+          "id": "visible_on_mobile",
+          "label": "Show on Mobile",
+          "default": true
+        },
+		{
+          "type": "header",
+          "content": "Content"
+        },
+  		{
+          "type": "text",
+          "id": "lblog_head",
+          "label": "Heading"
+        },
+        {
+          "type": "blog",
+          "id": "lblog_blog",
+          "label": "Choose a Blog"
+        },
+        {
+          "type": "text",
+          "id": "lblog_limit",
+          "label": "Articles Limit"
+        },
+		{
+          "type": "header",
+          "content": "Skins"
+        },
+		{
+			"type": "select",
+            "id": "lblog_skin",
+            "label": "Choose a Skin",
+			"options": [
+				{
+					"value": "default",
+					"label": "Default"
+				},
+				{
+					"value": "cameras",
+					"label": "Cameras"
+				},
+				{
+					"value": "cosmetics",
+					"label": "Cosmetics"
+				},
+				{
+					"value": "home",
+					"label": "Home"
+				},
+				{
+					"value": "homev2",
+					"label": "Home Version 2"
+				},
+				{
+					"value": "medic",
+					"label": "Medic"
+				},
+				{
+					"value": "wine",
+					"label": "Wine"
+				}
+			]
+		}
+	],
+	"presets": [
+		{
+          "name": "Latest Blogs",
+          "category": "Content",
+          "settings": {
+              "visible_on_mobile": true,
+              "lblog_head": "Latest Blogs",
+			  "lblog_blog": "",
+			  "lblog_limit": "4",
+			  "lblog_skin":"cameras"
+          }
+		}
+	]
+  }
+{% endschema %}

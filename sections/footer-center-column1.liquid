@@ -1,0 +1,190 @@
+<style> 
+{%- for block in section.blocks limit: section.blocks.size -%}
+  
+  {%- if block.settings.footer_social_size != '' -%}
+  #footer-column-{{section.id}} #social-icons-{{block.id}}.social-icons li {
+    font-size:{{block.settings.footer_social_size | plus:0}}px;
+  }
+  {%- endif -%}
+{%- endfor -%}
+</style> 
+{%- if settings.footer_section_column_layout != '' -%}
+{%- assign column_grid_version = settings.footer_section_column_layout | split: '_' -%}
+{%- assign column_version = '' -%}
+{%- if column_grid_version.size > 1 -%}{%- assign column_version = column_grid_version.last -%}{%- endif -%}
+{%- assign column_grid = settings.footer_section_column_layout | remove: '_2' | split: '-' -%}
+	<div id="footer-column-{{section.id}}" data-_class="col-sm-{{column_grid[0]}}" class="{%- if section.settings.visible_on_mobile == false -%}{{" hidden-xs"}}{%- endif-%}" data-section-id="{{ section.id }}" data-section-type="footer-column-1">
+      {%- for block in section.blocks limit: section.blocks.size -%}
+      {%- case block.type -%}
+      {%- when 'about_us' -%}
+      {%- include 'footer-block-about' with column_version -%}
+      {%- when 'banner' -%}
+      {%- include 'footer-block-banner' with column_version -%}
+      {%- when 'html' -%}
+      {%- include 'footer-block-html' with column_version -%}
+      {%- when 'newsletter' -%}
+      {%- include 'footer-block-newsletter' with column_version -%}
+      {%- when 'social_icon' -%}
+      {%- include 'footer-block-social-icon' with column_version -%}
+      {%- when 'featured_product' -%}
+      {%- include 'footer-block-product' with column_version -%}
+      {%- when 'linklist' -%}
+      {%- include 'footer-block-linklist' with column_version -%}
+      {%- else -%}
+      {%- endcase -%}
+      {%- endfor -%}
+	</div>  
+{%- endif -%}
+
+{% schema %}
+  {
+    "name": "Column 1",
+    "class": "index-section section-wrapper",
+    "settings": [
+		{
+          "type": "checkbox",
+          "id": "visible_on_mobile",
+          "label": "Show on Mobile",
+          "default": true
+        }
+	],
+	"blocks":[
+		{
+			"type":"about_us",
+			"name": "About Us",
+			"settings": [
+                {
+                  "type": "text",
+                  "id": "footer_about_heading",
+                  "label": "Heading",
+				  "default": "About Us"
+                },
+                {
+                  "type": "checkbox",
+                  "id": "footer_about_logo",
+                  "label": "Use Logo",
+				  "default": true
+                },
+                {
+                  "type": "image_picker",
+                  "id": "footer_about",
+                  "label": "Pick a Logo"
+                },
+                {
+                  "type": "textarea",
+                  "id": "footer_about_address",
+                  "label": "Address",
+				  "default": "Your Address Goes Here"
+                },
+                {
+                  "type": "text",
+                  "id": "footer_about_phone",
+                  "label": "Phone",
+				  "default": "123-456-7890"
+                },
+                {
+                  "type": "text",
+                  "id": "footer_about_email",
+                  "label": "Email",
+				  "default": "address@email.com"
+                }
+			]
+		},
+		{
+			"type": "linklist",
+			"name": "Linklist",
+			"settings": [
+				{
+                  "type": "text",
+                  "id": "footer_linklist_heading",
+                  "label": "Heading",
+                  "default": "Heading"
+                },
+                {
+                  "type": "link_list",
+                  "id": "footer_linklist",
+                  "label": "Choose a Linklist"
+                }
+			]
+		},
+		{
+			"type": "featured_product",
+			"name": "Featured Products",
+			"settings": [
+                {
+                  "type": "text",
+                  "id": "footer_product_heading",
+                  "label": "Heading",
+				  "default": "Your Collection"
+                },
+                {
+                  "type": "collection",
+                  "id": "footer_product_collection",
+                  "label": "Choose a Collection"
+                },
+                {
+                  "type": "text",
+                  "id": "footer_product_limit",
+                  "label": "Limit",
+				  "default": "2"
+                }
+			]
+		},
+		{
+			"type": "html",
+			"name": "Custom HTML",
+			"settings": [
+				{
+                  "type": "text",
+                  "id": "footer_html_heading",
+                  "label": "Heading",
+				  "default": "Heading"
+                },
+                {
+                  "type": "textarea",
+                  "id": "footer_html_custom",
+                  "label": "Your HTML [( ? )](https:\/\/youtu.be\/s7s8hWXVxGE)",
+				  "default": "This is HTML Content"
+                }
+			]
+		},
+		{
+			"type":"newsletter",
+			"name": "Newsletter",
+			"settings": [
+                {
+                  "type": "text",
+                  "id": "footer_newsletter_heading",
+                  "label": "Heading",
+				  "default": "Newsletter"
+                },
+                {
+                  "type": "textarea",
+                  "id": "footer_newsletter_caption",
+                  "label": "Caption",
+				  "default": "Your Caption Goes Here"
+                }
+			]
+		},
+		{
+			"type": "social_icon",
+			"name": "Social Icon",
+			"settings": [
+                {
+                  "type": "text",
+                  "id": "footer_social_heading",
+                  "label": "Heading",
+				  "default": "Follow Us"
+                },
+                {
+                  "type": "text",
+                  "id": "footer_social_size",
+                  "label": "Icon Size (in pixels)",
+				  "default": "26"
+                }
+			]
+		}
+	]
+	
+  }
+{% endschema %}

@@ -1,0 +1,128 @@
+{%- assign next_block = section.blocks[k] -%}
+{%- assign _sub_item_content_w 	= next_block.settings.mi_ct_w | plus: 0 -%}
+{%- assign _sub_item_mobile 		= next_block.settings.mi_mobile -%}
+{%- assign _sub_item_ct_type 		= next_block.type -%}
+{%- assign _t = _row_fluid | plus: _sub_item_content_w -%}
+
+{%- if _t > 12 -%}
+  {%- assign _row_fluid = _sub_item_content_w -%}
+  </div><div class="border"></div><div class="row">
+{%- else -%}
+	{%- assign _row_fluid = _t -%}
+{%- endif -%}
+
+<div class="col-sm-{{_sub_item_content_w}}{%- if _sub_item_mobile -%}{{' '}}mobile-enabled{%- else -%}{{' '}}mobile-disabled{%- endif -%}"  {{ next_block.shopify_attributes }}>
+  {%- if _sub_item_ct_type == 'submenu_html' -%}
+  	{{next_block.settings.mi_ct_html}}
+  {%- elsif _sub_item_ct_type == 'submenu_product' -%}
+	{%- assign _sub_item_ct_prod_size = 'grande' -%}
+    {%- assign _sub_item_ct_prod_width = next_block.settings.mi_ct_prod_w -%}
+    {%- assign _sub_item_ct_prod_height = next_block.settings.mi_ct_prod_h  -%}
+    {%- if _sub_item_ct_prod_width != '' and _sub_item_ct_prod_height != '' -%}
+    {%- capture _sub_item_ct_prod_size -%}{{ _sub_item_ct_prod_width }}x{{ _sub_item_ct_prod_height }}{%- endcapture -%}
+    {%- endif -%}
+    {%- assign _sub_item_ct_prod = all_products [next_block.settings.mi_ct_prod] -%}
+    {%- assign _variant_tmp = _sub_item_ct_prod.selected_or_first_available_variant | default: product.variants.first -%}
+    <div class="product">
+      <div class="image">
+        <a href="{{_sub_item_ct_prod.url}}">
+          <img src="{{_sub_item_ct_prod.featured_image | product_img_url:_sub_item_ct_prod_size}}" />
+        </a>
+      </div>
+      <div class="name">
+        <a href="{{_sub_item_ct_prod.url}}">{{_sub_item_ct_prod.title}}</a>
+      </div>
+      <div class="price">
+        <span class="money">{{ _variant_tmp.price | money }}</span>
+      </div>
+    </div>
+  {%- elsif _sub_item_ct_type == 'submenu_linklist' -%}
+  	{%- include 'section-mega-menu-content-links' -%}
+
+  {%- elsif _sub_item_ct_type == 'submenu_products' -%}
+  {%- assign _sub_item_ct_prods_inrow = next_block.settings.mi_ct_prods_inrow -%}
+  {%- assign _one = 1 -%}
+  {%- assign _two = 1 -%}
+  {%- assign _three = 1 -%}
+  {%- assign _four = 1 -%}
+
+  {%- if _sub_item_ct_prods_inrow == '2' -%}
+  {%- assign _two = 1 -%}
+  {%- assign _three = 2 -%}
+  {%- assign _four = 2 -%}
+  {%- endif -%}
+
+  {%- if _sub_item_ct_prods_inrow == '3' -%}
+  {%- assign _two = 1 -%}
+  {%- assign _three = 2 -%}
+  {%- assign _four = 3 -%}
+  {%- endif -%}
+
+  {%- if _sub_item_ct_prods_inrow == '4' -%}
+  {%- assign _one = 1 -%}
+  {%- assign _two = 2 -%}
+  {%- assign _three = 3 -%}
+  {%- assign _four = 4 -%}
+  {%- endif -%}
+
+  {%- if _sub_item_ct_prods_inrow == '5' -%}
+  {%- assign _one = 2 -%}
+  {%- assign _two = 3 -%}
+  {%- assign _three = 4 -%}
+  {%- assign _four = 5 -%}
+  {%- endif -%}
+
+  {%- if _sub_item_ct_prods_inrow == '6' -%}
+  {%- assign _one = 2 -%}
+  {%- assign _two = 3 -%}
+  {%- assign _three = 5 -%}
+  {%- assign _four = 6 -%}
+  {%- endif -%}
+
+  {%- assign _id = 'rt' | append: i | append: '_' | append: k -%}
+  {%- assign _sub_item_ct_prods = next_block.settings.mi_ct_prods -%}
+	
+  {%- assign _sub_item_ct_prods_size = 'grande' -%}
+  {%- assign _sub_item_ct_prods_width = next_block.settings.mi_ct_prods_imgw -%}
+  {%- assign _sub_item_ct_prods_height = next_block.settings.mi_ct_prods_imgh  -%}
+  {%- if _sub_item_ct_prods_width != '' and _sub_item_ct_prods_height != '' -%}
+  {%- capture _sub_item_ct_prods_size -%}{{ _sub_item_ct_prods_width }}x{{ _sub_item_ct_prods_height }}{%- endcapture -%}
+  {%- endif -%}
+  <div class="products-carousel-overflow clearfix products-carousel-megamenu" 
+       data-_id="{{_id}}" 
+       data-_one="{{_one}}"
+       data-_two="{{_two}}"
+       data-_three="{{_three}}"
+       data-_four="{{_four}}"
+       >
+    <div class="next productsCarousel{{_id}}_next" id="productsCarousel{{_id}}_next"><span></span></div>
+    <div class="prev productsCarousel{{_id}}_prev" id="productsCarousel{{_id}}_prev"><span></span></div>
+    <div class="box-heading">{{next_block.settings.mi_ct_prods_head}}</div>
+    <div class="strip-line"></div>
+    <div class="clear"></div>
+    <div class="products-carousel owl-carousel productsCarousel{{_id}}" id="productsCarousel{{_id}}">
+      {%- for _prod in collections[_sub_item_ct_prods].products -%}
+      {%- assign _variant_tmp = _prod.selected_or_first_available_variant | default: _prod.variants.first -%}
+      <div class="item">
+        <div class="product">
+          <div class="image">
+            {%- if _variant_tmp.compare_at_price > variant_tmp.price and settings.product_sale_badge != '' -%}
+            {%- if settings.product_sale_badge == '1' -%}
+            <div class="sale">-{{ _variant_tmp.compare_at_price | minus: _variant_tmp.price | times: 100.0 | divided_by: _variant_tmp.compare_at_price | money_without_currency | times: 100 | remove: '.0'}}%</div>
+            {%- else -%}
+            <div class="sale">{{'products.product.sale' | t}}</div>
+            {%- endif -%}
+            {%- elsif settings.product_new_badge and _prod.tags contains 'latest' -%}
+            <div class="new">{{'products.product.new' | t}}</div>
+            {%- endif -%}
+            <a href="{{_prod.url}}"><img src="{{_prod.featured_image | product_img_url:_sub_item_ct_prods_size}}" alt="" /></a>
+          </div>
+          <div class="name"><a href="{{_prod.url}}">{{_prod.title}}</a></div>
+          <div class="price"><span class="money">{{ _variant_tmp.price | money }}</span></div>
+        </div>
+      </div>
+      {%- endfor -%}
+    </div>
+  </div>
+  {%- endif -%}
+</div>

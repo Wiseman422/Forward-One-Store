@@ -1,0 +1,36 @@
+<div class="featured" {{ block.shopify_attributes }}>
+  {%- if block.settings.footer_product_heading != '' -%}<h4 class="title">{{block.settings.footer_product_heading}}</h4>{%- endif -%}
+  <div class="strip-line"></div>
+  <div class="clearfix">
+    {%- assign featuredC = collections[block.settings.footer_product_collection] -%}
+    <div class="advanced-grid-products">
+      {%- for featuredP in featuredC.products limit: block.settings.footer_product_limit -%}
+      {%- assign featuredV = featuredP.selected_or_first_available_variant -%}
+      <div class="product clearfix">
+        <div class="image">
+          <a href="{{featuredP.url}}"><img src="{{featuredP.featured_image | product_img_url:'small'}}" alt="{{featuredP.title | escape}}" /></a>
+        </div>
+        <div class="right">
+          <div class="name"><a href="{{featuredP.url}}">{{featuredP.title}}</a></div>
+          <div class="price"><span class="money">{{featuredV.price | money}}</span>{%- if featuredV.compare_at_price > featuredV.price -%}{{' '}}<span class="price-old money">{{featuredV.compare_at_price | money}}</span>{%- endif -%}</div>
+        </div>
+      </div>
+      {%- else -%}
+      {%- assign  _limit = block.settings.footer_product_limit -%}
+      {%- for i in(1.._limit) -%}
+      <div class="product clearfix">
+        <div class="image">
+          <a href="#">
+            {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+            {{ 'product-' | append: current | placeholder_svg_tag: 'placeholder-svg' }}
+          </a>
+        </div>
+        <div class="right">
+          <div class="name"><a href="#">{{"products.product.title" | t}}</a></div><div class="price"><span class="price-new money" data-currency-usd="{{ "19.99"| money_with_currency}}">{{ "1999.99"| money_with_currency}}</span></div>
+        </div>
+      </div>
+      {%- endfor -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
